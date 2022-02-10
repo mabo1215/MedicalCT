@@ -5,7 +5,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.models as models
 from torchvision import datasets, transforms
-from model import ctmodel
+# from model import ctmodel
 
 
 
@@ -125,13 +125,13 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/JointBERT/checkpoint/CodeDes/",help="")
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/checkpoint/CodeDes/",help="")
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
     parser.add_argument('--model-name', type=str, default="DenseNet",help="")  # DenseNet, resnet101 , resnet152
 
