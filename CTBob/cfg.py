@@ -37,20 +37,20 @@ model_name = 'DenseNet'
 # weights_path = 'weights/resnext101_32x32d/shuffle_10.pth'
 weights_path = 'checkpoint/CodeDes/model_0100.pth'
 
-from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
-MODEL_NAMES = {
-    'resnext101_32x8d': Resnext101_32x8d,
-    'resnext101_32x16d': Resnext101_32x16d,
-    'resnext101_32x48d': Resnext101_32x48d,
-    'resnext101_32x32d': Resnext101_32x32d,
-    'resnet50': Resnet50,
-    'resnet101': Resnet101,
-    'densenet121': Densenet121,
-    'densenet169': Densenet169,
-    'moblienetv2': Mobilenetv2,
-    'efficientnet-b7': Efficientnet,
-    'efficientnet-b8': Efficientnet
-}
+# from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
+# MODEL_NAMES = {
+#     'resnext101_32x8d': Resnext101_32x8d,
+#     'resnext101_32x16d': Resnext101_32x16d,
+#     'resnext101_32x48d': Resnext101_32x48d,
+#     'resnext101_32x32d': Resnext101_32x32d,
+#     'resnet50': Resnet50,
+#     'resnet101': Resnet101,
+#     'densenet121': Densenet121,
+#     'densenet169': Densenet169,
+#     'moblienetv2': Mobilenetv2,
+#     'efficientnet-b7': Efficientnet,
+#     'efficientnet-b8': Efficientnet
+# }
 
 
 BASE = os.getcwd()
