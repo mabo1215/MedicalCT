@@ -11,6 +11,7 @@ checkpoint/
 infdata/
 traindata/
 weights/
+Medvenv/
 
 # C extensions
 *.so
