@@ -40,6 +40,10 @@ def load_model(model_name,dev,lr):
         net = models.resnet152(pretrained=True)
     elif model_name == "MobileNetV3":
         net = models.MobileNetV3()
+    elif model_name == "SqueezeNet":
+        net = models.squeezenet1_1(pretrained=True)
+    elif model_name == "Vgg":
+        net = models.vgg16(pretrained=True)
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
 
     if dev == 1 and model_name != "ctmodel":
@@ -131,9 +135,9 @@ if __name__ == "__main__":
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CodeDes/",help="")
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTSqeExp/",help="")   # CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="DenseNet",help="")  # DenseNet, resnet101 , resnet152
+    parser.add_argument('--model-name', type=str, default="SqueezeNet",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp
 
     args = parser.parse_args()
 
