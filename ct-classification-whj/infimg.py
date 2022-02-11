@@ -11,6 +11,10 @@ import math
 import torch
 from PIL import Image, ImageOps, ImageFilter
 from torchvision import transforms, models
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
 
 
 class Resize(object):
@@ -72,6 +76,48 @@ def load_checkpoint(filepath, model_name):
     return model
 
 
+def plot_roc_curve(fpr, tpr):
+    plt.plot(fpr, tpr, color='orange', label='ROC')
+    plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC) Curve')
+    plt.legend()
+    plt.show()
+
+
+def result_csv(csv_url, truth, predict, model_name):
+    data = pd.read_csv(csv_url)
+    data.columns = ['id', 'labels']
+    dtp = data[data.id.str.contains(str(truth[0])) & data.labels.str.contains(str(predict[0]))]
+    dfn = data[data.id.str.contains(str(truth[0])) & data.labels.str.contains(str(predict[1]))]
+    dfp = data[data.id.str.contains(str(truth[1])) & data.labels.str.contains(str(predict[0]))]
+    dtn = data[data.id.str.contains(str(truth[1])) & data.labels.str.contains(str(predict[1]))]
+    tp = len(dtp)
+    fp = len(dfp)
+    tn = len(dtn)
+    fn = len(dfn)
+    tpr = tp / (tp + fn)
+    fpr = fp / (fp + tn)
+    # model_name = [str(model_name)]
+    acc = round((tp + tn) / (tp + fp + fn + tn), 3)
+    recall = round(tp / (tp + fn), 3)
+    precision = round(tp / (tp + fp), 3)
+    false_positive_rate = round(fp / (fp + tn + 0.01), 3)
+    positive_predictive_value = round(tp / (tp + fp + 0.01), 3)
+    negative_predictive_value = round(tn / (fn + tn + 0.01), 3)
+    result = pd.DataFrame({"model name": model_name,
+                           "Accuracy": acc,
+                           "Recall": recall,
+                           "Precision": precision,
+                           "False positive rate": false_positive_rate,
+                           "Positive predictive value": positive_predictive_value,
+                           "Negative predictive value": negative_predictive_value})
+
+    # return result
+    return result, tpr, fpr
+
+
 def predict(model, model_name):
     # 读入模型
     model = load_checkpoint(model, model_name)
@@ -104,24 +150,32 @@ def predict(model, model_name):
 if __name__ == "__main__":
     trained_model = cfg.TRAINED_MODEL
     model_name = cfg.model_name
+    save_path = './infdata/{}_result.csv'.format(model_name)
     with open(cfg.TEST_LABEL_DIR, 'r') as f:
         imgs = f.readlines()
 
     # _id, pred_list = tta_predict(trained_model)
-    _id, pred_list = predict(trained_model, model_name)
-
+    idx, pred_list = predict(trained_model, model_name)
+    # print(pred_list)
+    # print(idx)
+    Truth = ['non', 'covid']
     Class_name = ['Normal', 'Pneumonia']
     pre_res = []
     for i in pred_list:
         if int(i) == 1:
-            pre_res.append(Class_name[-1])
-        else:
             pre_res.append(Class_name[0])
-
-    print(_id, pre_res)
-
-    submission = pd.DataFrame({"ID": _id, "Label": pre_res})
+        else:
+            pre_res.append(Class_name[1])
+    # print(pre_res)
+    idx = list(idx)
+    submission = pd.DataFrame({'id': idx, 'labels': pre_res})
     if not os.path.exists(cfg.BASE + '/infdata/'):
         os.makedirs(cfg.BASE + '/infdata/')
     submission.to_csv(cfg.BASE + '/infdata/{}_submission.csv'
-                      .format(model_name), index=False, header=False)
+                      .format(model_name), index=False)
+
+    # result = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name, model_name)
+    # result.to_csv(save_path,index=False, mode='a')
+    result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
+                                  model_name)
+    # plot_roc_curve(fpr, tpr)
