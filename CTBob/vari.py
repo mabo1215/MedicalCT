@@ -25,7 +25,8 @@ if __name__ == "__main__":
     sample = [0.882 ,  0.887  ,   0.893  ,   0.884  , 0.893] # Resnet152xray
     sample = [0.961 , 0.959 , 0.961 , 0.949 , 0.963] # jdcnetxray
     sample = [0.951 ,  0.953  ,   0.957 ,   0.949  , 0.951] # jdcnetCT
-    sample = [0.939 ,  0.936  ,   0.937  ,   0.934, 0.932 ] # Res101CT
+    sample = [0.941 , 0.943  ,   0.939   , 0.941 ] # Res101CT
+
 
 
     # Prints variance of the sample set
