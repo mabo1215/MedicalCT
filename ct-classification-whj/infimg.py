@@ -12,6 +12,7 @@ import torch
 from PIL import Image, ImageOps, ImageFilter
 from torchvision import transforms, models
 import matplotlib.pyplot as plt
+import statistics
 import seaborn as sns
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
@@ -110,6 +111,7 @@ def result_csv(csv_url, truth, predict, model_name):
                            "Accuracy": acc,
                            "Recall": recall,
                            "Precision": precision,
+                           # "Variance": statistics.variance(),
                            "False positive rate": false_positive_rate,
                            "Positive predictive value": positive_predictive_value,
                            "Negative predictive value": negative_predictive_value})

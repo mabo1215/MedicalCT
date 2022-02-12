@@ -6,7 +6,7 @@ import torchvision
 import torchvision.models as models
 from torchvision import datasets, transforms
 # from model import ctmodel
-
+from transformers import ViTFeatureExtractor, ViTModel
 
 
 #对训练集做一个变换
@@ -44,6 +44,8 @@ def load_model(model_name,dev,lr):
         net = models.squeezenet1_1(pretrained=True)
     elif model_name == "Vgg":
         net = models.vgg16(pretrained=True)
+    elif model_name == "googlenet":
+        net = models.googlenet(pretrained=True,progress =  True)
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
 
     if dev == 1 and model_name != "ctmodel":
@@ -129,15 +131,15 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTSqeExp/",help="")   # CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XRGogExp/",help="")   # CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="SqueezeNet",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp
+    parser.add_argument('--model-name', type=str, default="googlenet",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet
 
     args = parser.parse_args()
 

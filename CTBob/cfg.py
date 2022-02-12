@@ -28,13 +28,15 @@ import os
 # model_name = 'MobileNetV3'
 # model_name = 'DenseNet'
 # model_name = 'resnet152'
-model_name = 'SqueezeNet'
+# model_name = 'SqueezeNet'
 # model_name = 'Vgg'
+model_name = 'googlenet'
 
 # weights_path = 'weights/resnext101_32x32d/shuffle_10.pth'
 # weights_path = 'checkpoint/CodeDes/model_0100.pth'
-weights_path = 'checkpoint/CTSqeExp/model_0100.pth'
+# weights_path = 'checkpoint/CTSqeExp/model_0100.pth'
 # weights_path = 'checkpoint/CTVggExp/model_0100.pth'
+weights_path = 'checkpoint/XRGogExp/model_0100.pth'
 
 # from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
 # MODEL_NAMES = {

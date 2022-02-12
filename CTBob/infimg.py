@@ -11,6 +11,7 @@ import math
 import torch
 from PIL import Image, ImageOps, ImageFilter
 from torchvision import transforms,models
+from transformers import ViTFeatureExtractor, ViTModel
 
 
 
@@ -62,6 +63,8 @@ def load_checkpoint(filepath,model_name):
         model = models.ShuffleNetV2()
     elif model_name == "resnet152":
         model = models.resnet152(pretrained=True)
+    elif model_name == "googlenet":
+        net = models.googlenet(pretrained=True, progress=True)
     else:
         model = models.resnet101(pretrained=True)
     # model = checkpoint['model']  # 提取网络结构
