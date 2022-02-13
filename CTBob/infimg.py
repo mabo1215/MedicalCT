@@ -64,7 +64,7 @@ def load_checkpoint(filepath,model_name):
     elif model_name == "resnet152":
         model = models.resnet152(pretrained=True)
     elif model_name == "googlenet":
-        net = models.googlenet(pretrained=True, progress=True)
+        model = models.googlenet(pretrained=True, progress=True)
     else:
         model = models.resnet101(pretrained=True)
     # model = checkpoint['model']  # 提取网络结构

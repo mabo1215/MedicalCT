@@ -6,7 +6,7 @@ import os
 # BATCH_SIZE = 32
 
 #网络默认输入图像的大小
-# INPUT_SIZE = 300
+INPUT_SIZE = 300
 #训练最多的epoch
 # MAX_EPOCH = 100
 # 使用gpu的数目
@@ -36,7 +36,7 @@ model_name = 'googlenet'
 # weights_path = 'checkpoint/CodeDes/model_0100.pth'
 # weights_path = 'checkpoint/CTSqeExp/model_0100.pth'
 # weights_path = 'checkpoint/CTVggExp/model_0100.pth'
-weights_path = 'checkpoint/XRGogExp/model_0100.pth'
+weights_path = 'checkpoint/XRGogExp/XRGog_0100.pth'
 
 # from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
 # MODEL_NAMES = {
