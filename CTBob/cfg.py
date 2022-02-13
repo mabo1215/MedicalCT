@@ -6,7 +6,7 @@ import os
 # BATCH_SIZE = 32
 
 #网络默认输入图像的大小
-INPUT_SIZE = 300
+INPUT_SIZE = 640
 #训练最多的epoch
 # MAX_EPOCH = 100
 # 使用gpu的数目

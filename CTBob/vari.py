@@ -21,12 +21,16 @@ import statistics
 if __name__ == "__main__":
     # Creating a sample of data
     # sample = [0.867, 0.868, 0.87, 0.867, 0.867]  # DesnetCT
-    sample = [0.927, 0.924, 0.927, 0.926] # Resnet152xray
-    sample = [0.882 ,  0.887  ,   0.893  ,   0.884  , 0.893] # Resnet152xray
-    sample = [0.961 , 0.959 , 0.961 , 0.949 , 0.963] # jdcnetxray
-    sample = [0.951 ,  0.953  ,   0.957 ,   0.949  , 0.951] # jdcnetCT
-    sample = [0.941 , 0.943  ,   0.939   , 0.941 ] # Res101CT
-    sample = [0.931 , 0.93 , 0.929 , 0.931 , 0.93 ] # DesnetXRAY
+    # sample = [0.927, 0.924, 0.927, 0.926] # Resnet152xray
+    # sample = [0.882 ,  0.887  ,   0.893  ,   0.884  , 0.893] # Resnet152xray
+    # sample = [0.961 , 0.959 , 0.961 , 0.949 , 0.963] # jdcnetxray
+    # sample = [0.951 ,  0.953  ,   0.957 ,   0.949  , 0.951] # jdcnetCT
+    # sample = [0.941 , 0.943  ,   0.939   , 0.941 ] # Res101CT
+    # sample = [0.927, 0.924, 0.927, 0.926] # Resnet152xray
+    sample = [0.931 , 0.93 , 0.929 , 0.931 , 0.93] # SqueezenetXray
+    sample = [0.867 , 0.868 , 0.87 , 0.867 , 0.867] # DesnetXRAY
+    sample = [0.961 ,  0.961 , 0.963 ,  0.96 , 0.962 ] # GOOGLENETCT
+    sample = [0.937 ,  0.934 , 0.936 ,  0.935 , 0.935] # RESNET152CT
 
 
     # Prints variance of the sample set

@@ -131,15 +131,15 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/XRay/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.001)
-    parser.add_argument('--batch-size', type=int, default=16)
+    parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTRes152Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrRes101Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="resnet152",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet
+    parser.add_argument('--model-name', type=str, default="resnet101",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet
 
     args = parser.parse_args()
 
