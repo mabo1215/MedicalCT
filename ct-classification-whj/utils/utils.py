@@ -12,6 +12,7 @@ def deal_csv(csv_url, ids, labels):
     data.columns = ['truth', 'predict']
     data['truth'] = data['truth'].apply(lambda x: 1 if ids[0] in x else 0)
     data['predict'] = data['predict'].apply(lambda x: 1 if labels[0] in x else 0)
+    data.sort_values('predict', inplace=True, ascending=False)
 
     return data
 
@@ -60,7 +61,18 @@ def plot_roc(data):
     plt.show()
     # plt.savefig('roc_curve:{}'.format(model_name))
 
-    return AUC
+
+def eval_roc(data):
+    TPRandFPR = pd.DataFrame(index=range(len(data)), columns=('TP', 'FP'))
+    for j in range(len(data)):
+        data1 = data.head(n=j + 1)
+        FP = len(data1[data1['truth'] == 0]) / float(len(data[data['truth'] == 0]))
+        TP = len(data1[data1['truth'] == 1]) / float(len(data[data['truth'] == 1]))
+        TPRandFPR.iloc[j] = [TP, FP]
+    AUC= auc(TPRandFPR['FP'],TPRandFPR['TP'])
+
+    # return TPRandFPR
+    return TPRandFPR,AUC
 
 
 def evaluate(data):
