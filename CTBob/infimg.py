@@ -67,8 +67,8 @@ def load_checkpoint(filepath,model_name):
         model = models.googlenet(pretrained=True, progress=True)
     else:
         model = models.resnet101(pretrained=True)
-    # model = checkpoint['model']  # 提取网络结构
-    model.load_state_dict(checkpoint)  # 加载网络权重参数
+    # model = checkpoint['model']  # extra model
+    model.load_state_dict(checkpoint)  # load model
     for parameter in model.parameters():
         parameter.requires_grad = False
     model.eval()
@@ -76,11 +76,11 @@ def load_checkpoint(filepath,model_name):
 
 
 def predict(model,model_name):
-    # 读入模型
+    # read models
     model = load_checkpoint(model,model_name)
     print('..... Finished loading model! ......')
     mean, std = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
-    ##将模型放置在gpu上运行
+    ##in gpu
     dev =0
     if torch.cuda.is_available():
         dev = 1

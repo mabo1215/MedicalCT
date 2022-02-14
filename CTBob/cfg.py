@@ -1,27 +1,21 @@
 import os
-##数据集的类别
+##class related
 # NUM_CLASSES = 206
-
-#训练时batch的大小
 # BATCH_SIZE = 32
 
-#网络默认输入图像的大小
+## default image size for model
 INPUT_SIZE = 640
-#训练最多的epoch
+## epoch Num.
 # MAX_EPOCH = 100
-# 使用gpu的数目
-# GPUS = 2
-# 从第几个epoch开始resume训练，如果为0，从头开始
-# RESUME_EPOCH = 0
 
 # WEIGHT_DECAY = 5e-4
 # MOMENTUM = 0.9
-# 初始学习率
+## default learning rate
 # LR = 1e-3
 
 
 
-# 采用的模型名称
+## Model Name
 # model_name = 'resnext101_32x32d'
 # model_name = 'ShuffleNetV2'
 # model_name = 'resnet101'
@@ -57,15 +51,15 @@ weights_path = 'checkpoint/XRGogExp/XRGog_0100.pth'
 BASE = os.getcwd()
 
 
-# 训练好模型的保存位置
+## Model saved path
 SAVE_FOLDER = os.path.join(BASE, 'weights/')
 
-#数据集的存放位置
+## data path
 # TRAIN_LABEL_DIR =BASE + 'train.txt'
 # VAL_LABEL_DIR = BASE + 'val.txt'
 TEST_LABEL_DIR = os.path.join(BASE,  'infdata/test.txt')
 
-##训练完成，权重文件的保存路径,默认保存在trained_model下
+## full saved path for trained_model
 TRAINED_MODEL = os.path.join(BASE, weights_path)
 
 

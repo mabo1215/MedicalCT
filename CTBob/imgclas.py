@@ -38,6 +38,8 @@ def load_model(model_name,dev,lr):
         net = models.DenseNet()
     elif model_name == "resnet152":
         net = models.resnet152(pretrained=True)
+    elif model_name == "resnet18":
+        net = models.resnet18(pretrained=True)
     elif model_name == "MobileNetV3":
         net = models.MobileNetV3()
     elif model_name == "SqueezeNet":
@@ -46,7 +48,9 @@ def load_model(model_name,dev,lr):
         net = models.vgg16(pretrained=True)
     elif model_name == "googlenet":
         net = models.googlenet(pretrained=True,progress =  True)
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
+    # optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
+    optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
 
     if dev == 1 and model_name != "ctmodel":
         net.to('cuda')
@@ -55,7 +59,7 @@ def load_model(model_name,dev,lr):
         # torch.device('cpu')
         loss = torch.nn.CrossEntropyLoss()  # 损失函数
     print("model loaded...")
-    return net,loss,optimizer
+    return net,loss,optimizer,scheduler
 
 def load_local_dataset(dataset_dir, ratio = 0.8, batch_size = 256):
     #获取数据集
@@ -92,7 +96,7 @@ def load_datasets(dataset_dir):
 
 
 #训练模型
-def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir):
+def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir, scheduler):
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
@@ -110,10 +114,11 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir)
             train_l_sum += l.item()
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item()
             train_num += y.shape[0]
+        scheduler.step()
         print('epoch %d, loss %.4f, train acc %.3f' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
 
         # 测试过程
-        if (epoch+1) %5 == 0:
+        if (epoch+1) %10 == 0:
             test_acc_sum, test_num= 0.0, 0
             with torch.no_grad(): #不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout
@@ -137,9 +142,9 @@ if __name__ == "__main__":
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrRes101Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XraySqeExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="resnet101",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet
+    parser.add_argument('--model-name', type=str, default="SqueezeNet",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18
 
     args = parser.parse_args()
 
@@ -153,5 +158,5 @@ if __name__ == "__main__":
 
     print(args,dev)
     train_iter, test_iter = load_local_dataset(dataset_dir,ratio,batch_size)
-    net, loss, optimizer = load_model(args.model_name,dev,lr)
-    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,args.save_dir)
+    net, loss, optimizer, scheduler = load_model(args.model_name,dev,lr)
+    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,args.save_dir, scheduler)
