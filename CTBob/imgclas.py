@@ -115,7 +115,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item()
             train_num += y.shape[0]
         scheduler.step()
-        print('epoch %d, loss %.4f, train acc %.3f' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
+        print('epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
 
         # 测试过程
         if (epoch+1) %10 == 0:
@@ -138,11 +138,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/XRay/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
-    parser.add_argument('--lr', type=float, default=0.001)
-    parser.add_argument('--batch-size', type=int, default=32)
+    parser.add_argument('--lr', type=float, default=0.01)
+    parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XraySqeExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XraySquExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
     parser.add_argument('--model-name', type=str, default="SqueezeNet",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18
 

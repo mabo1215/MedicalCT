@@ -31,6 +31,8 @@ if __name__ == "__main__":
     sample = [0.867 , 0.868 , 0.87 , 0.867 , 0.867] # DesnetXRAY
     sample = [0.961 ,  0.961 , 0.963 ,  0.96 , 0.962 ] # GOOGLENETCT
     sample = [0.937 ,  0.934 , 0.936 ,  0.935 , 0.935] # RESNET152CT
+    sample = [0.93 , 0.936 , 0.936 , 0.934 ,  0.937 ] # RESNET101XR
+
 
 
     # Prints variance of the sample set
