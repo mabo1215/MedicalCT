@@ -9,6 +9,7 @@ fsspec==2021.8.1
 gcsfs==2021.8.1
 google-cloud-storage==1.42.1
 torch-model-archiver==0.4.2
+pytorch_lightning
 
 google-cloud-aiplatform==1.4.0
 google-cloud-build==3.3.1

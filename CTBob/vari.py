@@ -32,7 +32,7 @@ if __name__ == "__main__":
     sample = [0.961 ,  0.961 , 0.963 ,  0.96 , 0.962 ] # GOOGLENETCT
     sample = [0.937 ,  0.934 , 0.936 ,  0.935 , 0.935] # RESNET152CT
     sample = [0.93 , 0.936 , 0.936 , 0.934 ,  0.937 ] # RESNET101XR
-
+    sample = [0.953 , 0.956 , 0.953 , 0.954 , 0.953] # RESNET18XR
 
 
     # Prints variance of the sample set

@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     Class_name= ['Covid','Normal']
     pre_res = []
-    for i in pred_list:
+    for i in tqdm.tqdm(pred_list):
         if int(i) == 1:
             pre_res.append(Class_name[-1])
         else:
