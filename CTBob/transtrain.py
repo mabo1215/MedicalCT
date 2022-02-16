@@ -1,5 +1,5 @@
 import transformers
-from transformers import AutoFeatureExtractor, DeiTForImageClassificationWithTeacher ,DeiTFeatureExtractor , ViTForImageClassification , ViTFeatureExtractor
+from transformers import AutoFeatureExtractor, DeiTForImageClassification ,DeiTFeatureExtractor , ViTForImageClassification , ViTFeatureExtractor , ViTModel
 from PIL import Image
 import requests
 import torch
@@ -13,6 +13,42 @@ import os
 import numpy as np
 import math
 import pytorch_lightning as pl
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import requests
+from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
+from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
+from hugsvision.dataio.VisionDataset import VisionDataset
+
+# 对训练集做一个变换
+# train_transforms = tfc.Compose([
+#     tfc.RandomResizedCrop(224),  # 对图片尺寸做一个缩放切割
+#     tfc.RandomHorizontalFlip(),  # 水平翻转
+#     tfc.ToTensor(),  # 转化为张量
+#     tfc.Normalize((.5, .5, .5), (.5, .5, .5))  # 进行归一化
+# ])
+
+def get_train_transform():
+    return tfc.Compose([
+        tfc.RandomResizedCrop(224),
+        tfc.RandomHorizontalFlip(),  # 水平翻转
+        tfc.ToTensor(),
+        tfc.Normalize((.5, .5, .5), (.5, .5, .5))
+    ])
+
+# 对测试集做变换
+test_transforms = tfc.Compose([
+    tfc.RandomResizedCrop(224),
+    tfc.ToTensor(),
+    tfc.Normalize((.5, .5, .5), (.5, .5, .5))
+])
+
+def get_test_transform(mean, std, size=0):
+    return tfc.Compose([
+        tfc.RandomResizedCrop(224),
+        tfc.ToTensor(),
+        tfc.Normalize((.5, .5, .5), (.5, .5, .5))
+    ])
 
 class ImageClassificationCollator:
    def __init__(self, feature_extractor):
@@ -43,34 +79,21 @@ class Classifier(pl.LightningModule):
        self.log(f"val_acc", acc, prog_bar=True)
        return outputs.loss
    def configure_optimizers(self):
+       # return torch.optim.AdamW(self.parameters(),
+       #                  lr=self.hparams.lr,weight_decay = 0.00025)
        return torch.optim.Adam(self.parameters(),
                         lr=self.hparams.lr,weight_decay = 0.00025)
 
 def load_local_dataset(dataset_dir, ratio = 0.8, batch_size = 256, model_name = 'Vit', num_workers = 1):
     #获取数据集
-    # 对训练集做一个变换
-    train_transforms = tfc.Compose([
-        tfc.RandomResizedCrop(224),  # 对图片尺寸做一个缩放切割
-        tfc.RandomHorizontalFlip(),  # 水平翻转
-        tfc.ToTensor(),  # 转化为张量
-        tfc.Normalize((.5, .5, .5), (.5, .5, .5))  # 进行归一化
-    ])
-
-    # 对测试集做变换
-    test_transforms = tfc.Compose([
-        tfc.RandomResizedCrop(224),
-        tfc.ToTensor(),
-        tfc.Normalize((.5, .5, .5), (.5, .5, .5))
-    ])
     # all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
-    all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
+    train_transform = get_train_transform()
+    all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transform)
 
     indices = torch.randperm(len(all_datasets)).tolist()
     n_val = math.floor(len(indices) * (1- ratio))
     train_ds = torch.utils.data.Subset(all_datasets, indices[:-n_val])
     val_ds = torch.utils.data.Subset(all_datasets, indices[-n_val:])
-
-
 
     if model_name == 'DeiT':
         feature_extractor = DeiTFeatureExtractor.from_pretrained('facebook/deit-base-distilled-patch16-224')
@@ -89,7 +112,7 @@ def load_local_dataset(dataset_dir, ratio = 0.8, batch_size = 256, model_name = 
 
 
 
-def load_model(model_name,dev,lr,all_datasets):
+def load_model(model_name,no_cuda,lr,all_datasets):
     loss = 0
     optimizer = []
 
@@ -99,10 +122,10 @@ def load_model(model_name,dev,lr,all_datasets):
         label2id[class_name] = str(i)
         id2label[str(i)] = class_name
 
-
+    device = torch.device('cuda' if torch.cuda.is_available() and not no_cuda else 'cpu')
 
     if model_name == 'DeiT':
-        model = DeiTForImageClassificationWithTeacher.from_pretrained(
+        model = DeiTForImageClassification.from_pretrained(
             'facebook/deit-base-distilled-patch16-224',
             num_labels=len(label2id),
             label2id=label2id,
@@ -119,21 +142,76 @@ def load_model(model_name,dev,lr,all_datasets):
     # optimizer = torch.optim.AdamW(model.parameters(), lr=lr)  # 优化器
     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
 
-    if dev == 1:
+    if device == 'cuda':
         model.to('cuda')
         loss = torch.nn.CrossEntropyLoss().to('cuda')  # 损失函数
-    elif dev == 0:
+    elif device == 'cpu':
         # torch.device('cpu')
         loss = torch.nn.CrossEntropyLoss()  # 损失函数
     print("model loaded...")
-    return model,loss,optimizer,scheduler
+    return model,loss,optimizer,scheduler,label2id,id2label
 
-def train(model, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir, scheduler, all_datasets):
-    pl.seed_everything(42)
-    classifier = Classifier(model, lr=2e-5)
-    trainer = pl.Trainer(gpus=1, precision=16, max_epochs=num_epochs)
-    trainer.fit(classifier, train_iter, test_iter)
-    trainer.save_checkpoint(f'{save_dir}/model_{str(num_epochs).zfill(4)}.pth')
+def train(num_epochs,no_cuda,save_dir, projectname, batch_size,dataset_dir,model_name, ratio = 0.2, lr = 2e-5):
+    device = torch.device('cuda' if torch.cuda.is_available() and not no_cuda else 'cpu')
+
+    train_ds, test_ds, id2label, label2id = VisionDataset.fromImageFolder(
+        dataset_dir,
+        test_ratio=ratio,
+        balanced=True,
+        augmentation=False,
+        torch_vision=True
+    )
+
+    model_pretrained = "google/vit-base-patch16-224-in21k"
+    if model_name == 'Deit':
+        model_pretrained = "facebook/deit-base-distilled-patch16-224"
+        trainer = VisionClassifierTrainer(
+            model_name=projectname,
+            train=train_ds,
+            test=test_ds,
+            output_dir=save_dir,
+            max_epochs=num_epochs,
+            batch_size=batch_size,  # On RTX 2080 Ti
+            lr	= lr,
+            fp16	     = True,
+            model = DeiTForImageClassification.from_pretrained(
+                model_pretrained,
+                num_labels = len(label2id),
+                label2id   = label2id,
+                id2label   = id2label
+            ).to(device),
+            feature_extractor = DeiTFeatureExtractor.from_pretrained(
+                model_pretrained,
+            ),
+        )
+    else:
+        trainer = VisionClassifierTrainer(
+            model_name=projectname,
+            train=train_ds,
+            test=test_ds,
+            output_dir=save_dir,
+            max_epochs=num_epochs,
+            batch_size=batch_size,  # On RTX 2080 Ti
+            lr	= lr,
+            fp16	     = True,
+            model = ViTForImageClassification.from_pretrained(
+                model_pretrained,
+                num_labels = len(label2id),
+                label2id   = label2id,
+                id2label   = id2label
+            ).to(device),
+            feature_extractor = ViTFeatureExtractor.from_pretrained(
+                model_pretrained,
+            ),
+        )
+
+    # pl.seed_everything(42)
+    # classifier = Classifier(model, lr=2e-5)
+    # trainer = pl.Trainer(gpus=1, precision=16, max_epochs=num_epochs)
+    # trainer.fit(classifier, train_iter, test_iter)
+    # trainer.save_checkpoint(f'{save_dir}/model_{str(num_epochs).zfill(3)}.pth')
+    # trainer.save_checkpoint(save_dir)
+
 
     # for epoch in range(num_epochs):
     #     # 训练过程
@@ -184,17 +262,19 @@ def train(model, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_di
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
-    parser.add_argument('--lr', type=float, default=0.0001)
-    parser.add_argument('--batch-size', type=int, default=32)
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument('--lr', type=float, default=2e-5)
+    parser.add_argument('--batch-size', type=int, default=16)
+    parser.add_argument('--epochs', type=int, default=20)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTRen18Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
-    parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="Vit",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18
-    parser.add_argument('--num-workers', type=int, default=2)
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--projectname', type=str, default="XRayDeitExp",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
 
+    parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
+    parser.add_argument('--model-name', type=str, default="Deit",help="")  #  Vit
+    parser.add_argument('--num-workers', type=int, default=2)
+    parser.add_argument('--infimg', type=str, default="E:/work/2/CT/test_sets/n2.png",help="")
 
     args = parser.parse_args()
 
@@ -203,26 +283,11 @@ if __name__ == "__main__":
     ratio = args.ratio
     batch_size = args.batch_size
     lr, num_epochs = args.lr, args.epochs
+    model_name = args.model_name
+    save_dir = args.save_dir
 
-    dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
+    print(args)
+    # train_iter, test_iter,all_datasets, feature_extractor = load_local_dataset(dataset_dir,ratio,batch_size, model_name,args.num_workers)
+    # model, loss, optimizer, scheduler,label2id,id2label = load_model(model_name,args.no_cuda ,lr,all_datasets)
+    train(num_epochs,args.no_cuda ,save_dir, args.projectname,batch_size,dataset_dir, model_name, (1-ratio), lr)
 
-    print(args,dev)
-    train_iter, test_iter,all_datasets, feature_extractor = load_local_dataset(dataset_dir,ratio,batch_size, args.model_name,args.num_workers)
-    model, loss, optimizer, scheduler = load_model(args.model_name,dev,lr,all_datasets)
-    train(model, train_iter, test_iter, optimizer, loss, num_epochs,dev,args.save_dir, scheduler, all_datasets)
-
-
-    url = 'E:/source/MedicalCT/CTBob/infdata/n333.jpeg'
-    im = Image.open(url)
-    inputs = feature_extractor(images=im, return_tensors="pt")
-    inputs.keys()
-
-    pixel_values = inputs['pixel_values']
-
-    # forward pass
-    outputs = model(pixel_values)
-    logits = outputs.logits
-
-    # model predicts one of the 1000 ImageNet classes
-    predicted_class_idx = logits.argmax(-1).item()
-    print("Predicted class:", model.config.id2label[predicted_class_idx])
