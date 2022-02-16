@@ -140,7 +140,7 @@ def evaluate(img_pathlist,model_name,model_dir,resout_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/res/Xray/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--batch-size', type=int, default=16)
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     parser.add_argument('--model-name', type=str, default="DeiT",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18  , Vit , DeiT
     parser.add_argument('--num-workers', type=int, default=2)
     parser.add_argument('--infimg', type=str, default="E:/work/2/CT/res/",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
-    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/res/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
+    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
     parser.add_argument('--resoutdir', type=str, default="E:/source/MedicalCT/CTBob",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
 
 

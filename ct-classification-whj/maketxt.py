@@ -30,18 +30,22 @@ def file_rename(path, name, num, file_type):
 
 # make txt file
 def write_txt(file_path, txt_path, test_percent):
-    total = os.listdir(file_path)
-    num = len(total)
-    list = range(num)
-    test = int(test_percent * num)
-    testlist = random.sample(list, test)
-    f = open(txt_path, 'a+')
-    for i in list:
-        name = total[i]
-        if i in testlist:
-            out_path = file_path + '/' + name
-            # print(out_path)
-            f.write(out_path + '\n')
+    totals = os.listdir(file_path)
+    with open(txt_path, 'w') as f:
+        for sub_path in totals:
+            file_path_jpg = os.path.join(file_path,sub_path)
+            sub_total = os.listdir(file_path_jpg)
+            num = len(sub_total)
+            list = range(num)
+            test = int(test_percent * num)
+            testlist = random.sample(list, test)
+
+            for i in list:
+                name = sub_total[i]
+                if i in testlist:
+                    out_path = os.path.join(file_path_jpg, name)
+                    # print(out_path)
+                    f.write(out_path + '\n')
     f.close()
 
 
