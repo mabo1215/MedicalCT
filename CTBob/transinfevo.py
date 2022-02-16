@@ -112,9 +112,9 @@ def evaluate(img_pathlist,model_name,model_dir,resout_dir):
             spam = txtfile.readlines()
             for ful_path in tqdm.tqdm(spam):
                 ful_path = ful_path.replace('\n','')
-                im = Image.open(ful_path).convert('RGB')
-                plt.imshow(im)
-                im.save(ful_path)
+                # im = Image.open(ful_path).convert('RGB')
+                # plt.imshow(im)
+                # im.save(ful_path)
 
                 label = classifier.predict(img_path=ful_path)
 
@@ -181,4 +181,4 @@ if __name__ == "__main__":
     acc, recall, precision, f1 = evaluate_res(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
-    result.to_csv(resoutdir+'/infdata/res{}.csv'.format(model_name), header=True, mode='a')
+    result.to_csv(resoutdir+'/infdata/res{}.csv'.format(model_name), header=False, mode='a+')

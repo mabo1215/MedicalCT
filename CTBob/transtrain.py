@@ -266,7 +266,7 @@ if __name__ == "__main__":
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=2e-5)
     parser.add_argument('--batch-size', type=int, default=16)
-    parser.add_argument('--epochs', type=int, default=20)
+    parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
     parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument('--projectname', type=str, default="XRayDeitExp",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
