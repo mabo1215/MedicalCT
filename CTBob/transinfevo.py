@@ -108,13 +108,13 @@ def evaluate(img_pathlist,model_name,model_dir,resout_dir):
     save_csv_res = resout_dir + '/infdata/{}_submission.csv'.format(model_name)
     # print(save_csv_res)
     with open(img_pathlist,'r+') as txtfile:
-        with open(save_csv_res, 'w+') as csvfile:
+        with open(save_csv_res, 'w+', encoding='utf-8') as csvfile:
             spam = txtfile.readlines()
             for ful_path in tqdm.tqdm(spam):
                 ful_path = ful_path.replace('\n','')
-                # im = Image.open(ful_path).convert('RGB')
+                im = Image.open(ful_path).convert('RGB')
                 # plt.imshow(im)
-                # im.save(ful_path)
+                im.save(ful_path)
 
                 label = classifier.predict(img_path=ful_path)
 
@@ -140,18 +140,18 @@ def evaluate(img_pathlist,model_name,model_dir,resout_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/chest_xray/",help="")  #E:\work\2\CT\chest_xray   # E:/work/2/CT/COVID19Dataset/Xray/
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--epochs', type=int, default=10)
     # Data, model, and output directories
-    parser.add_argument('--model-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XRAYDEITEXP/20_2022-02-16-15-19-02/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--model-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XRAYDEITEXP/100_2022-02-16-22-21-26/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
     parser.add_argument('--model-name', type=str, default="DeiT",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18  , Vit , DeiT
     parser.add_argument('--num-workers', type=int, default=2)
     parser.add_argument('--infimg', type=str, default="E:/work/2/CT/res/",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
-    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
+    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/chest_xray/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
     parser.add_argument('--resoutdir', type=str, default="E:/source/MedicalCT/CTBob",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
 
 
@@ -173,7 +173,9 @@ if __name__ == "__main__":
     # prediction(sig_img,model_name,model_dir)
     evaluate(batchinflist,model_name,model_dir,args.resoutdir)
 
-    Truth = ['Cov','Norm']
+    print(resoutdir + '/infdata/{}_submission.csv')
+
+    Truth = ['COVID','NORMAL']
     Class_name = ['COVID','NORMAL']
     data = deal_csv(resoutdir + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name)
     auc = plot_roc(data)
@@ -181,4 +183,4 @@ if __name__ == "__main__":
     acc, recall, precision, f1 = evaluate_res(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
-    result.to_csv(resoutdir+'/infdata/res{}.csv'.format(model_name), header=False, mode='a+')
+    result.to_csv(resoutdir+'/infdata/res{}.csv'.format(model_name), header=True, mode='a+')

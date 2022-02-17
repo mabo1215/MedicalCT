@@ -9,22 +9,25 @@ def file_rename(path, name, num, file_type):
     print('Generating new filename such as:' + name + num + file_type)
     filenames = os.listdir(path)
     for files in filenames:
-        old_name = os.path.join(path, files)
-        # print(old_name)
-        if not os.path.isdir(old_name):
-            # continue
-            new_name = os.path.join(path, name + str(count + int(num)) + file_type)
-            if os.path.isdir(new_name):
-                count += 1
-                new_name = os.path.join(path, name + str(count + int(num)) + file_type)
-            if old_name.endswith('.png'):
-                im1 = Image.open(old_name)
-                rgb_im = im1.convert('RGB')
-                rgb_im.save(new_name)
-                os.remove(old_name)
-            else:
-                os.rename(old_name, new_name)
-            count += 1
+        old_name_path = os.path.join(path, files)
+        if os.path.isdir(old_name_path):
+            name = files
+            old_name = os.listdir(old_name_path)
+            for sub_path in old_name:
+                full_img_path = os.path.join(old_name_path, sub_path)
+                if not os.path.isdir(full_img_path):
+                    new_name = os.path.join(old_name_path, name + str(count + int(num)) + file_type)
+                    if os.path.isdir(new_name):
+                        # count += 1
+                        new_name = os.path.join(new_name, name + str(count + int(num)) + file_type)
+                    print(new_name)
+                    # if old_name.endswith('.png') or old_name.endswith('.bmp') :
+                    im1 = Image.open(full_img_path).convert('RGB')
+                    im1.save(new_name)
+                    os.remove(full_img_path)
+                    # else:
+                    #     os.rename(old_name, new_name)
+                    count += 1
     print(str(count) + 'files renamed')
 
 
@@ -34,18 +37,19 @@ def write_txt(file_path, txt_path, test_percent):
     with open(txt_path, 'w') as f:
         for sub_path in totals:
             file_path_jpg = os.path.join(file_path,sub_path)
-            sub_total = os.listdir(file_path_jpg)
-            num = len(sub_total)
-            list = range(num)
-            test = int(test_percent * num)
-            testlist = random.sample(list, test)
+            if os.path.isdir(file_path_jpg):
+                sub_total = os.listdir(file_path_jpg)
+                num = len(sub_total)
+                list = range(num)
+                test = int(test_percent * num)
+                testlist = random.sample(list, test)
 
-            for i in list:
-                name = sub_total[i]
-                if i in testlist:
-                    out_path = os.path.join(file_path_jpg, name)
-                    # print(out_path)
-                    f.write(out_path + '\n')
+                for i in list:
+                    name = sub_total[i]
+                    if i in testlist:
+                        out_path = os.path.join(file_path_jpg, name)
+                        # print(out_path)
+                        f.write(out_path + '\n')
     f.close()
 
 
