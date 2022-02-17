@@ -175,8 +175,8 @@ if __name__ == "__main__":
 
     print(resoutdir + '/infdata/{}_submission.csv')
 
-    Truth = ['COVID','NORMAL']
-    Class_name = ['COVID','NORMAL']
+    Truth = ['COVID', 'NORMAL']
+    Class_name = ['COVID', 'NORMAL']
     data = deal_csv(resoutdir + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name)
     auc = plot_roc(data)
     plot_cm(data)

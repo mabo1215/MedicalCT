@@ -4,7 +4,8 @@ import argparse
 from PIL import Image
 
 # rename file
-def file_rename(path, name, num, file_type):
+def file_rename(path, num, file_type):
+    name = ''
     count = 0
     print('Generating new filename such as:' + name + num + file_type)
     filenames = os.listdir(path)
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--file_path', '--f', type=str, default='', help='file path')
     parser.add_argument('--txt_name', '--t', type=str, default='', help='output file name')
-    parser.add_argument('--start_name', '--n', type=str, default='', help='start name')
+    # parser.add_argument('--start_name', '--n', type=str, default='', help='start name')
     parser.add_argument('--start_num', '--b', type=str, default='', help='start num')
     parser.add_argument('--file_type', type=str, default='.jpg', help='file type such as:.jpg')
     parser.add_argument('--options', '--o', type=str, default='renam', help='options rename or write')
@@ -65,6 +66,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.options == 'rename':
-        file_rename(args.file_path, args.start_name, args.start_num, args.file_type)
+        file_rename(args.file_path, args.start_num, args.file_type)
     else:
         write_txt(args.file_path, args.txt_name, args.percent)
