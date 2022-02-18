@@ -128,11 +128,12 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
         loss_rate = train_l_sum / train_num
         acc_rate = train_acc_sum / train_num
         print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
-        wandb.log({'epoch': epoch, 'loss': float(loss_rate), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
+        wandb.log({'epoch': epoch, 'loss': float(loss_rate*1000), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
 
         # 测试过程
         if (epoch+1) %10 == 0:
             # wandb.save(save_dir + f'save_{epoch}.h5')
+            wandb.watch(net)
             test_acc_sum, test_num= 0.0, 0
             with torch.no_grad(): #不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout

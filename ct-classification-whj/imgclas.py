@@ -101,7 +101,6 @@ def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
         train_l_sum, train_acc_sum, train_num = 0.0, 0.0, 0
-        wandb.watch(net)
         for X, y in train_iter:
             if dev == 1:
                 X = X.to('cuda')
@@ -117,12 +116,14 @@ def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir
             train_num += y.shape[0]
         loss_rate = train_l_sum / train_num
         acc_rate = train_acc_sum / train_num
+        loss_rate = train_l_sum / train_num
+        acc_rate = train_acc_sum / train_num
         print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
-        wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss_rate, 'accuracy': acc_rate})
-        wandb.save(save_dir,f'/save_{num_epochs}.h5')
+        wandb.log({'epoch': epoch, 'loss': float(loss_rate*1000), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
 
         # 测试过程
         if (epoch + 1) % 5 == 0:
+            wandb.watch(net)
             test_acc_sum, test_num = 0.0, 0
             with torch.no_grad():  # 不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout
