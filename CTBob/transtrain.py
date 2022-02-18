@@ -213,7 +213,7 @@ def train(num_epochs,no_cuda,save_dir, projectname, batch_size,dataset_dir,model
         )
     wandb.watch(trainer)
     wandb.log({'epoch': num_epochs, 'lr': lr})
-    wandb.save('mymodel.h5')
+    wandb.save(save_dir, f'/save_{num_epochs}.h5')
     # pl.seed_everything(42)
     # classifier = Classifier(model, lr=2e-5)
     # trainer = pl.Trainer(gpus=1, precision=16, max_epochs=num_epochs)
