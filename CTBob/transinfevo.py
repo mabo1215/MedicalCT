@@ -140,18 +140,18 @@ def evaluate(img_pathlist,model_name,model_dir,resout_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/chest_xray/",help="")  #E:\work\2\CT\chest_xray   # E:/work/2/CT/COVID19Dataset/Xray/
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")  #E:\work\2\CT\chest_xray   # E:/work/2/CT/COVID19Dataset/Xray/
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--epochs', type=int, default=10)
     # Data, model, and output directories
-    parser.add_argument('--model-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XRAYDEITEXP/100_2022-02-16-22-21-26/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--model-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XRAYVITEXPC/50_2022-02-16-21-12-20/",help="")   # E:\source\MedicalCT\CTBob\checkpoint\XRAYVITEXPC\50_2022-02-16-21-12-20    E:/source/MedicalCT/CTBob/checkpoint/XRAYDEITEXP/100_2022-02-16-22-21-26/
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="DeiT",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18  , Vit , DeiT
+    parser.add_argument('--model-name', type=str, default="Vit",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18  , Vit , DeiT
     parser.add_argument('--num-workers', type=int, default=2)
     parser.add_argument('--infimg', type=str, default="E:/work/2/CT/res/",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
-    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/chest_xray/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
+    parser.add_argument('--batchinflist', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/test.txt",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
     parser.add_argument('--resoutdir', type=str, default="E:/source/MedicalCT/CTBob",help="") #Norm5478.jpg , Cov937.jpg , Cov2945.jpg
 
 

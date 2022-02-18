@@ -19,6 +19,13 @@ import requests
 from hugsvision.inference.VisionClassifierInference import VisionClassifierInference
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from hugsvision.dataio.VisionDataset import VisionDataset
+import wandb
+import logging
+
+
+
+logging.propagate = False
+logging.getLogger().setLevel(logging.ERROR)
 
 # 对训练集做一个变换
 # train_transforms = tfc.Compose([
@@ -204,7 +211,9 @@ def train(num_epochs,no_cuda,save_dir, projectname, batch_size,dataset_dir,model
                 model_pretrained,
             ),
         )
-
+    wandb.watch(trainer)
+    wandb.log({'epoch': num_epochs, 'lr': lr})
+    wandb.save('mymodel.h5')
     # pl.seed_everything(42)
     # classifier = Classifier(model, lr=2e-5)
     # trainer = pl.Trainer(gpus=1, precision=16, max_epochs=num_epochs)
@@ -285,6 +294,15 @@ if __name__ == "__main__":
     lr, num_epochs = args.lr, args.epochs
     model_name = args.model_name
     save_dir = args.save_dir
+    projectname = args.projectname
+
+    wandb.init(project=projectname, entity="mabo1215")
+
+    wandb.config = {
+        "learning_rate": lr,
+        "epochs": num_epochs,
+        "batch_size": batch_size
+    }
 
     print(args)
     # train_iter, test_iter,all_datasets, feature_extractor = load_local_dataset(dataset_dir,ratio,batch_size, model_name,args.num_workers)

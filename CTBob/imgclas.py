@@ -8,7 +8,13 @@ import tqdm
 from torchvision import datasets, transforms
 # from model import ctmodel
 from transformers import ViTFeatureExtractor, ViTModel
+import wandb
+import logging
 
+
+
+logging.propagate = False
+logging.getLogger().setLevel(logging.ERROR)
 
 #对训练集做一个变换
 train_transforms = transforms.Compose([
@@ -103,6 +109,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
+        wandb.watch(net)
         train_l_sum, train_acc_sum, train_num = 0.0, 0.0, 0
         for X, y in tqdm.tqdm(train_iter):
             if dev == 1:
@@ -118,7 +125,11 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item()
             train_num += y.shape[0]
         scheduler.step()
-        print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
+        loss_rate = train_l_sum / train_num
+        acc_rate = train_acc_sum / train_num
+        print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
+        wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss_rate, 'accuracy': acc_rate})
+        wandb.save(save_dir,f'/save_{num_epochs}.h5')
 
         # 测试过程
         if (epoch+1) %10 == 0:
@@ -156,10 +167,20 @@ if __name__ == "__main__":
     ratio = args.ratio
     batch_size = args.batch_size
     lr, num_epochs = args.lr, args.epochs
+    model_name = args.model_name
 
     dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
 
     print(args,dev)
     train_iter, test_iter = load_local_dataset(dataset_dir,ratio,batch_size)
     net, loss, optimizer, scheduler = load_model(args.model_name,dev,lr)
+
+    wandb.init(project=model_name, entity="mabo1215")
+
+    wandb.config = {
+        "learning_rate": lr,
+        "epochs": num_epochs,
+        "batch_size": batch_size
+    }
+
     train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,args.save_dir, scheduler)

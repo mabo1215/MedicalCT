@@ -13,6 +13,8 @@ traindata/
 weights/
 Medvenv/
 
+CTBob/wandb
+
 CTBob/lightning_logs/
 
 # C extensions

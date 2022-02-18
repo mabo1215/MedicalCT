@@ -6,6 +6,14 @@ import torchvision
 import torchvision.models as models
 from torchvision import datasets, transforms
 # from model import ctmodel
+import wandb
+import logging
+
+
+
+logging.propagate = False
+logging.getLogger().setLevel(logging.ERROR)
+
 
 # 对训练集做一个变换
 train_transforms = transforms.Compose([
@@ -89,6 +97,9 @@ def load_datasets(dataset_dir):
 
 # 训练模型
 def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir):
+
+    wandb.watch(net)
+
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
@@ -107,6 +118,8 @@ def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item()
             train_num += y.shape[0]
         print('epoch %d, loss %.4f, train acc %.3f' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
+        wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss})
+        wandb.save('mymodel.h5')
 
         # 测试过程
         if (epoch + 1) % 5 == 0:
@@ -128,7 +141,7 @@ def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="D:\Download\data\chest_xray-20220208T042619Z-001\chest_xray",
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",
                         help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.001)
@@ -143,6 +156,7 @@ if __name__ == "__main__":
 
     # 定义损失函数和优化器
     dataset_dir = args.data_dir
+    model_name = args.model_name
     ratio = args.ratio
     batch_size = args.batch_size
     lr, num_epochs = args.lr, args.epochs
@@ -152,4 +166,14 @@ if __name__ == "__main__":
     print(args, dev)
     train_iter, test_iter = load_local_dataset(dataset_dir, ratio, batch_size)
     net, loss, optimizer = load_model(args.model_name, dev, lr)
+
+    wandb.init(project=model_name, entity="mabo1215")
+
+    wandb.config = {
+        "learning_rate": lr,
+        "epochs": num_epochs,
+        "batch_size": batch_size
+    }
+
+
     train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, args.save_dir)
