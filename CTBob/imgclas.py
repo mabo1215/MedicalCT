@@ -56,7 +56,7 @@ def load_model(model_name,dev,lr):
     elif model_name == "googlenet":
         net = models.googlenet(pretrained=True,progress =  True)
     elif model_name == "shufflenetv2":
-        net = models.shufflenet_v2_x2_0(pretrained=True)
+        net = models.shufflenet_v2_x2_0()
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
     # optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
@@ -130,7 +130,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
         loss_rate = train_l_sum / train_num
         acc_rate = train_acc_sum / train_num
         print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
-        wandb.log({'epoch': epoch, 'loss': float(loss_rate*1000), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
+        wandb.log({'epoch': epoch, 'loss': float(loss_rate*8000), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
 
         # 测试过程
         if (epoch+1) %10 == 0:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     # Data, model, and output directories
     parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayMobV3Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="mobilenet_v3_small",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
+    parser.add_argument('--model-name', type=str, default="shufflenetv2",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
 
     args = parser.parse_args()
 
