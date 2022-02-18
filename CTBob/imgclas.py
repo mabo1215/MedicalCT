@@ -47,14 +47,16 @@ def load_model(model_name,dev,lr):
         net = models.resnet152(pretrained=True)
     elif model_name == "resnet18":
         net = models.resnet18(pretrained=True)
-    elif model_name == "MobileNetV3":
-        net = models.MobileNetV3()
+    elif model_name == "mobilenet_v3_small":
+        net = models.mobilenet_v3_small(pretrained=True,progress =  True)
     elif model_name == "SqueezeNet":
         net = models.squeezenet1_1(pretrained=True)
     elif model_name == "Vgg":
         net = models.vgg16(pretrained=True)
     elif model_name == "googlenet":
         net = models.googlenet(pretrained=True,progress =  True)
+    elif model_name == "shufflenetv2":
+        net = models.shufflenet_v2_x2_0(pretrained=True)
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
     # optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
@@ -151,15 +153,15 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTRen18Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayMobV3Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="resnet18",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18
+    parser.add_argument('--model-name', type=str, default="mobilenet_v3_small",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
 
     args = parser.parse_args()
 
