@@ -128,7 +128,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
         loss_rate = train_l_sum / train_num
         acc_rate = train_acc_sum / train_num
         print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
-        wandb.log({'epoch': epoch, 'loss': loss_rate, 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
+        wandb.log({'epoch': epoch, 'loss': float(loss_rate), 'accuracy': acc_rate,'train number': train_num, 'train_l_sum': train_l_sum})
 
         # 测试过程
         if (epoch+1) %10 == 0:
