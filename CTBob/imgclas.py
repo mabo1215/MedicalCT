@@ -129,10 +129,10 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
         acc_rate = train_acc_sum / train_num
         print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
         wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss_rate, 'accuracy': acc_rate})
-        wandb.save(save_dir,f'/save_{num_epochs}.h5')
 
         # 测试过程
         if (epoch+1) %10 == 0:
+            wandb.save(save_dir + f'/save_{epoch}.h5')
             test_acc_sum, test_num= 0.0, 0
             with torch.no_grad(): #不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout
@@ -168,6 +168,7 @@ if __name__ == "__main__":
     batch_size = args.batch_size
     lr, num_epochs = args.lr, args.epochs
     model_name = args.model_name
+    save_dir = args.save_dir
 
     dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
 
@@ -183,4 +184,4 @@ if __name__ == "__main__":
         "batch_size": batch_size
     }
 
-    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,args.save_dir, scheduler)
+    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,save_dir, scheduler)
