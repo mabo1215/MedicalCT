@@ -109,7 +109,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
-        wandb.watch(net)
+        # wandb.watch(net)
         train_l_sum, train_acc_sum, train_num = 0.0, 0.0, 0
         for X, y in tqdm.tqdm(train_iter):
             if dev == 1:
@@ -132,7 +132,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
 
         # 测试过程
         if (epoch+1) %10 == 0:
-            wandb.save(save_dir + f'/save_{epoch}.h5')
+            # wandb.save(save_dir + f'save_{epoch}.h5')
             test_acc_sum, test_num= 0.0, 0
             with torch.no_grad(): #不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout
