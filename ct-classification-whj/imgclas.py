@@ -97,13 +97,11 @@ def load_datasets(dataset_dir):
 
 # 训练模型
 def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir):
-
-    wandb.watch(net)
-
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
         train_l_sum, train_acc_sum, train_num = 0.0, 0.0, 0
+        wandb.watch(net)
         for X, y in train_iter:
             if dev == 1:
                 X = X.to('cuda')
@@ -117,9 +115,11 @@ def train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, save_dir
             train_l_sum += l.item()
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item()
             train_num += y.shape[0]
-        print('epoch %d, loss %.4f, train acc %.3f' % (epoch + 1, train_l_sum / train_num, train_acc_sum / train_num))
-        wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss})
-        wandb.save('mymodel.h5')
+        loss_rate = train_l_sum / train_num
+        acc_rate = train_acc_sum / train_num
+        print('\n epoch %d, loss %.4f, train acc %.3f ' % (epoch + 1, loss_rate, acc_rate))
+        wandb.log({'epoch': num_epochs, 'lr': lr, 'loss': loss_rate, 'accuracy': acc_rate})
+        wandb.save(save_dir,f'/save_{num_epochs}.h5')
 
         # 测试过程
         if (epoch + 1) % 5 == 0:
