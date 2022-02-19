@@ -52,7 +52,7 @@ def load_model(model_name,dev,lr):
     elif model_name == "SqueezeNet":
         net = models.squeezenet1_1(pretrained=True)
     elif model_name == "Vgg":
-        net = models.vgg16(pretrained=True)
+        net = models.vgg19_bn(pretrained=True,progress=True)
     elif model_name == "googlenet":
         net = models.googlenet(pretrained=True,progress =  True)
     elif model_name == "shufflenetv2":
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     # Data, model, and output directories
     parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayMobV3Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="shufflenetv2",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
+    parser.add_argument('--model-name', type=str, default="mobilenet_v3_small",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
 
     args = parser.parse_args()
 
