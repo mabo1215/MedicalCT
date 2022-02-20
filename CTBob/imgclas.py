@@ -24,12 +24,27 @@ train_transforms = transforms.Compose([
     transforms.Normalize((.5, .5, .5), (.5, .5, .5))	#进行归一化
 ])
 
+# #对训练集做一个变换
+# train_transforms = transforms.Compose([
+#     transforms.RandomResizedCrop(224),		#对图片尺寸做一个缩放切割
+#     transforms.RandomHorizontalFlip(),		#水平翻转
+#     transforms.ToTensor(),					#转化为张量
+#     transforms.Normalize((.3, .3, .3), (.3, .3, .3))	#进行归一化
+# ])
+
 #对测试集做变换
 test_transforms = transforms.Compose([
     transforms.RandomResizedCrop(224),
     transforms.ToTensor(),
     transforms.Normalize((.5, .5, .5), (.5, .5, .5))
 ])
+
+# #对测试集做变换
+# test_transforms = transforms.Compose([
+#     transforms.RandomResizedCrop(224),
+#     transforms.ToTensor(),
+#     transforms.Normalize((.3, .3, .3), (.3, .3, .3))
+# ])
 
 def load_model(model_name,dev,lr):
     net = []
@@ -55,8 +70,8 @@ def load_model(model_name,dev,lr):
         net = models.googlenet(pretrained=True,progress =  True)
     elif model_name == "Shufflenetv2":
         net = models.shufflenet_v2_x1_0(pretrained=True)
-    elif model_name == "Inceptionv3":
-        net = models.inception_v3(pretrained=True)
+    elif model_name == "Efficientnet":
+        net = models.efficientnet_b7(pretrained=True)
     elif model_name == "Regnet":
         net = models.regnet_y_800mf(pretrained=True,progress=True)
     elif model_name == "Alexnet":
@@ -68,7 +83,8 @@ def load_model(model_name,dev,lr):
     # optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
     # scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, max_lr= 0.3 , last_epoch=-1)  # lr scheduler
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0 = 10, T_mult=1, eta_min=0.1, last_epoch=-1)  # lr scheduler
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.9)  # lr scheduler
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0 = 10, T_mult=1, eta_min=0.1, last_epoch=-1)  # lr scheduler
 
     if dev == 1 and model_name != "ctmodel":
         net.to('cuda')
@@ -163,12 +179,12 @@ if __name__ == "__main__":
     parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="") #E:/work/2/CT/COVID19Dataset/Xray/
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0001)
-    parser.add_argument('--batch-size', type=int, default=32)
+    parser.add_argument('--batch-size', type=int, default=8)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayAlxExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayEffExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="Inceptionv3",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet
+    parser.add_argument('--model-name', type=str, default="Efficientnet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet
 
     args = parser.parse_args()
 
