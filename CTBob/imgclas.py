@@ -18,33 +18,35 @@ logging.getLogger().setLevel(logging.ERROR)
 
 #对训练集做一个变换
 train_transforms = transforms.Compose([
-    transforms.RandomResizedCrop(224),		#对图片尺寸做一个缩放切割
+    transforms.RandomResizedCrop(299),		#对图片尺寸做一个缩放切割 224
     transforms.RandomHorizontalFlip(),		#水平翻转
     transforms.ToTensor(),					#转化为张量
     transforms.Normalize((.5, .5, .5), (.5, .5, .5))	#进行归一化
 ])
 
-# #对训练集做一个变换
-# train_transforms = transforms.Compose([
-#     transforms.RandomResizedCrop(224),		#对图片尺寸做一个缩放切割
-#     transforms.RandomHorizontalFlip(),		#水平翻转
-#     transforms.ToTensor(),					#转化为张量
-#     transforms.Normalize((.3, .3, .3), (.3, .3, .3))	#进行归一化
-# ])
-
-#对测试集做变换
-test_transforms = transforms.Compose([
-    transforms.RandomResizedCrop(224),
+#对训练集做一个变换 inceptionv3
+train_transforms_inc = transforms.Compose([
+    transforms.Resize(299),
+    transforms.CenterCrop(299),
     transforms.ToTensor(),
-    transforms.Normalize((.5, .5, .5), (.5, .5, .5))
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-# #对测试集做变换
-# test_transforms = transforms.Compose([
-#     transforms.RandomResizedCrop(224),
-#     transforms.ToTensor(),
-#     transforms.Normalize((.3, .3, .3), (.3, .3, .3))
-# ])
+#对训练集做一个变换
+test_transforms = transforms.Compose([
+    transforms.RandomResizedCrop(224),		#对图片尺寸做一个缩放切割
+    transforms.RandomHorizontalFlip(),		#水平翻转
+    transforms.ToTensor(),					#转化为张量
+    transforms.Normalize((.3, .3, .3), (.3, .3, .3))	#进行归一化
+])
+
+#对训练集做一个变换 inceptionv3
+test_transforms_inc = transforms.Compose([
+    transforms.Resize(299),
+    transforms.CenterCrop(299),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
 
 def load_model(model_name,dev,lr):
     net = []
@@ -72,10 +74,14 @@ def load_model(model_name,dev,lr):
         net = models.shufflenet_v2_x1_0(pretrained=True)
     elif model_name == "Efficientnet":
         net = models.efficientnet_b7(pretrained=True)
+    elif model_name == "Mnasnet1_0":
+        net = models.mnasnet1_0(pretrained=True,progress=True)
     elif model_name == "Regnet":
         net = models.regnet_y_800mf(pretrained=True,progress=True)
     elif model_name == "Alexnet":
         net = models.alexnet(pretrained=True)
+    elif model_name == "Inceptionv3":
+        net = models.inception_v3(pretrained=True)
     # if model_name == "Alexnet":
     #     optimizer = torch.optim.sgd(net.parameters(), lr=lr)  # 优化器
     # else:
@@ -92,12 +98,18 @@ def load_model(model_name,dev,lr):
     elif dev == 0 and model_name != "ctmodel":
         # torch.device('cpu')
         loss = torch.nn.CrossEntropyLoss()  # 损失函数
+    # elif model_name == "Inceptionv3":
+    #     # torch.device('cpu')
+    #     loss = torch.nn.Softmax().to('cuda')  # 损失函数
     print("model loaded...")
     return net,loss,optimizer,scheduler
 
-def load_local_dataset(dataset_dir, ratio = 0.8, batch_size = 256):
+def load_local_dataset(dataset_dir, model_name, ratio = 0.8, batch_size = 256):
     #获取数据集
-    all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
+    if model_name == 'Inceptionv3':
+        all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms_inc)
+    else:
+        all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
     #将数据集划分成训练集和测试集
     train_size=int(ratio * len(all_datasets))
     test_size=len(all_datasets) - train_size
@@ -130,7 +142,7 @@ def load_datasets(dataset_dir):
 
 
 #训练模型
-def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir, scheduler):
+def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir, scheduler,model_name):
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
@@ -140,8 +152,12 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
             if dev == 1:
                 X = X.to('cuda')
                 y = y.to('cuda')
-            y_hat = net(X)
+            if model_name == 'Inceptionv3':
+                y_hat = net(X).aux_logits
+            else:
+                y_hat = net(X)
             l = loss(y_hat, y).sum()
+            # l = loss(y_hat, y)
             optimizer.zero_grad()
             l.backward()
             optimizer.step()
@@ -178,13 +194,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="") #E:/work/2/CT/COVID19Dataset/Xray/
     parser.add_argument('--ratio', type=float, default=0.8)
-    parser.add_argument('--lr', type=float, default=0.0001)
-    parser.add_argument('--batch-size', type=int, default=8)
+    parser.add_argument('--lr', type=float, default=0.0002)
+    parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayEffExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrGOOGLExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="Efficientnet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet
+    parser.add_argument('--model-name', type=str, default="Googlenet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
 
     args = parser.parse_args()
 
@@ -199,8 +215,8 @@ if __name__ == "__main__":
     dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
 
     print(args,dev)
-    train_iter, test_iter = load_local_dataset(dataset_dir,ratio,batch_size)
-    net, loss, optimizer, scheduler = load_model(args.model_name,dev,lr)
+    train_iter, test_iter = load_local_dataset(dataset_dir, model_name,ratio,batch_size)
+    net, loss, optimizer, scheduler = load_model(model_name,dev,lr)
 
     wandb.init(project=model_name, entity="mabo1215")
 
@@ -210,4 +226,4 @@ if __name__ == "__main__":
         "batch_size": batch_size
     }
 
-    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,save_dir, scheduler)
+    train(net, train_iter, test_iter, optimizer, loss, num_epochs,dev,save_dir, scheduler,model_name)
