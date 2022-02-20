@@ -35,28 +35,35 @@ def load_model(model_name,dev,lr):
     net = []
     loss = 0
     optimizer = []
-    if model_name == 'resnet101':
+    if model_name == 'Resnet101':
         net = models.resnet101(pretrained=True)
         # net = ResNet.ResNet_model(50).cuda()  #使用GPU训练
         # net = torch.nn.DataParallel(ResNet.net).cuda()  #使用多块GPU共同训练
-    elif model_name == "ShuffleNetV2":
-        net = models.ShuffleNetV2(pretrained=True,width_mult=1.0,last_channel=True)
     elif model_name == "DenseNet":
         net = models.DenseNet()
-    elif model_name == "resnet152":
+    elif model_name == "Resnet152":
         net = models.resnet152(pretrained=True)
-    elif model_name == "resnet18":
+    elif model_name == "Resnet18":
         net = models.resnet18(pretrained=True)
-    elif model_name == "mobilenet_v3_small":
+    elif model_name == "Mobilenet_v3_small":
         net = models.mobilenet_v3_small(pretrained=True,progress =  True)
     elif model_name == "SqueezeNet":
         net = models.squeezenet1_1(pretrained=True)
     elif model_name == "Vgg":
-        net = models.vgg19_bn(pretrained=True,progress=True)
-    elif model_name == "googlenet":
+        net = models.vgg11(pretrained=True)
+    elif model_name == "Googlenet":
         net = models.googlenet(pretrained=True,progress =  True)
-    elif model_name == "shufflenetv2":
-        net = models.shufflenet_v2_x2_0()
+    elif model_name == "Shufflenetv2":
+        net = models.shufflenet_v2_x1_0(pretrained=True)
+    elif model_name == "Inceptionv3":
+        net = models.inception_v3(pretrained=True)
+    elif model_name == "Regnet":
+        net = models.regnet_y_800mf(pretrained=True,progress=True)
+    elif model_name == "Alexnet":
+        net = models.alexnet(pretrained=True)
+    # if model_name == "Alexnet":
+    #     optimizer = torch.optim.sgd(net.parameters(), lr=lr)  # 优化器
+    # else:
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
     # optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
@@ -153,15 +160,15 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="")
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="") #E:/work/2/CT/COVID19Dataset/Xray/
     parser.add_argument('--ratio', type=float, default=0.8)
-    parser.add_argument('--lr', type=float, default=0.001)
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayMobV3Exp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrayAlxExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="mobilenet_v3_small",help="")  # DenseNet, resnet101 , resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenetv2
+    parser.add_argument('--model-name', type=str, default="Inceptionv3",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet
 
     args = parser.parse_args()
 

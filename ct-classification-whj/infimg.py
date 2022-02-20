@@ -152,7 +152,7 @@ if __name__ == "__main__":
     result = make_csv(model_name, acc, recall, precision, f1, auc)
     result.to_csv(save_path, header=True, mode='a')
 
-    # result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
-    #                               model_name)
-    # data.to_csv(save_path, header=True, mode='a')
-    # plot_roc_curve(fpr, tpr)
+    result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
+                                  model_name)
+    data.to_csv(save_path, header=True, mode='a')
+    plot_roc_curve(fpr, tpr)
