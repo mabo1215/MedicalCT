@@ -52,19 +52,43 @@ def get_test_transform(mean, std, size=0):
         transforms.Normalize((.5, .5, .5), (.5, .5, .5))
     ])
 
+def get_test_transform_inception(mean, std, size=0):
+    return transforms.Compose([
+        transforms.Resize(299),
+        transforms.CenterCrop(299),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
 def load_checkpoint(filepath,model_name):
     print(filepath)
     checkpoint = torch.load(filepath)
     if model_name == "DenseNet":
         model = models.DenseNet()
-    elif model_name == "MobileNetV3":
-        model = models.MobileNetV3()
-    elif model_name == "ShuffleNetV2":
-        model = models.ShuffleNetV2()
-    elif model_name == "resnet152":
-        model = models.resnet152(pretrained=True)
-    elif model_name == "googlenet":
-        model = models.googlenet(pretrained=True, progress=True)
+    elif model_name == "Resnet152":
+        net = models.resnet152(pretrained=True)
+    elif model_name == "Resnet18":
+        net = models.resnet18(pretrained=True)
+    elif model_name == "Mobilenet_v3_small":
+        net = models.mobilenet_v3_small(pretrained=True, progress=True)
+    elif model_name == "SqueezeNet":
+        net = models.squeezenet1_1(pretrained=True)
+    elif model_name == "Vgg":
+        net = models.vgg11(pretrained=True)
+    elif model_name == "Googlenet":
+        net = models.googlenet(pretrained=True, progress=True)
+    elif model_name == "Shufflenetv2":
+        net = models.shufflenet_v2_x1_0(pretrained=True)
+    elif model_name == "Efficientnet":
+        net = models.efficientnet_b7(pretrained=True)
+    elif model_name == "Mnasnet1_0":
+        net = models.mnasnet1_0(pretrained=True, progress=True)
+    elif model_name == "Regnet":
+        net = models.regnet_y_800mf(pretrained=True, progress=True)
+    elif model_name == "Alexnet":
+        net = models.alexnet(pretrained=True)
+    elif model_name == "Inceptionv3":
+        net = models.inception_v3(pretrained=True)
     else:
         model = models.resnet101(pretrained=True)
     # model = checkpoint['model']  # extra model
@@ -93,7 +117,10 @@ def predict(model,model_name):
         _id.append(os.path.basename(img_path).split('.')[0])
         img = Image.open(img_path).convert('RGB')
         # print(type(img))
-        img = get_test_transform(mean,std,size=cfg.INPUT_SIZE)(img).unsqueeze(0)
+        if model_name =="Inceptionv3":
+            img = get_test_transform_inception(mean,std,size=cfg.INPUT_SIZE)(img).unsqueeze(0)
+        else:
+            img = get_test_transform(mean,std,size=cfg.INPUT_SIZE)(img).unsqueeze(0)
 
         if dev == 1:
             img = img.cuda()

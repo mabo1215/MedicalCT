@@ -16,15 +16,23 @@ INPUT_SIZE = 640
 
 
 ## Model Name
-# model_name = 'resnext101_32x32d'
-# model_name = 'ShuffleNetV2'
-# model_name = 'resnet101'
-# model_name = 'MobileNetV3'
+
 # model_name = 'DenseNet'
-# model_name = 'resnet152'
+# model_name = 'Resnet152'
+# model_name = 'Resnet18'
+# model_name = 'Mobilenet_v3_small'
 # model_name = 'SqueezeNet'
 # model_name = 'Vgg'
-model_name = 'googlenet'
+model_name = 'Googlenet'
+# model_name = 'Shufflenetv2'
+# model_name = 'Efficientnet'
+# model_name = 'Mnasnet1_0'
+# model_name = 'Regnet'
+# model_name = 'Alexnet'
+# model_name = 'Inceptionv3'
+# model_name = 'Resnet101'
+
+
 
 # weights_path = 'weights/resnext101_32x32d/shuffle_10.pth'
 # weights_path = 'checkpoint/CodeDes/model_0100.pth'
