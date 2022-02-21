@@ -145,6 +145,7 @@ def load_datasets(dataset_dir):
 
 #训练模型
 def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir, scheduler,model_name):
+    best_acc = 0.0
     for epoch in range(num_epochs):
         # 训练过程
         net.train()  # 启用 BatchNormalization 和 Dropout
@@ -177,6 +178,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
             # wandb.save(save_dir + f'save_{epoch}.h5')
             wandb.watch(net)
             test_acc_sum, test_num= 0.0, 0
+            tmp_acc = 0.0
             with torch.no_grad(): #不求梯度、反向传播
                 net.eval()  # 不启用 BatchNormalization 和 Dropout
                 for X,y in test_iter:
@@ -185,11 +187,16 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
                         y = y.to('cuda')
                     test_acc_sum += (net(X).argmax(dim=1) == y).float().sum().item()
                     test_num += y.shape[0]
-                print('test acc %.3f' % (test_acc_sum / test_num))
+                tmp_acc = test_acc_sum / test_num
+                print('test acc %.3f' % (tmp_acc))
 
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
             torch.save(net.state_dict(), f'{save_dir}/model_{str(epoch + 1).zfill(4)}.pth')  # 保存模型
+
+            if tmp_acc> best_acc:
+                best_acc = tmp_acc
+                torch.save(net.state_dict(), f'{save_dir}/model_best.pth')  # 保存模型
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
