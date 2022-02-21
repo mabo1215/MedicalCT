@@ -145,14 +145,15 @@ if __name__ == "__main__":
                       .format(model_name), index=False)
 
     data = deal_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name)
-    auc = plot_roc(data)
+    plot_roc(data)
     plot_cm(data)
+    auc = eval_auc(data)
     acc, recall, precision, f1 = evaluate(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
     result.to_csv(save_path, header=True, mode='a')
 
-    result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
-                                  model_name)
-    data.to_csv(save_path, header=True, mode='a')
-    plot_roc_curve(fpr, tpr)
+    # result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
+    #                               model_name)
+    # data.to_csv(save_path, header=True, mode='a')
+    # plot_roc_curve(fpr, tpr)

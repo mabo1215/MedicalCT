@@ -62,7 +62,7 @@ def plot_roc(data):
     # plt.savefig('roc_curve:{}'.format(model_name))
 
 
-def eval_roc(data):
+def eval_auc(data):
     TPRandFPR = pd.DataFrame(index=range(len(data)), columns=('TP', 'FP'))
     for j in range(len(data)):
         data1 = data.head(n=j + 1)
@@ -72,7 +72,8 @@ def eval_roc(data):
     AUC= auc(TPRandFPR['FP'],TPRandFPR['TP'])
 
     # return TPRandFPR
-    return TPRandFPR,AUC
+    # return TPRandFPR,AUC
+    return AUC
 
 
 def evaluate(data):
