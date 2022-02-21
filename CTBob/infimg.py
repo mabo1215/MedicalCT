@@ -12,6 +12,8 @@ import torch
 from PIL import Image, ImageOps, ImageFilter
 from torchvision import transforms,models
 from transformers import ViTFeatureExtractor, ViTModel
+import tqdm
+from utils.utils import *
 
 
 
@@ -66,29 +68,29 @@ def load_checkpoint(filepath,model_name):
     if model_name == "DenseNet":
         model = models.DenseNet()
     elif model_name == "Resnet152":
-        net = models.resnet152(pretrained=True)
+        model = models.resnet152(pretrained=True)
     elif model_name == "Resnet18":
-        net = models.resnet18(pretrained=True)
+        model = models.resnet18(pretrained=True)
     elif model_name == "Mobilenet_v3_small":
-        net = models.mobilenet_v3_small(pretrained=True, progress=True)
+        model = models.mobilenet_v3_small(pretrained=True, progress=True)
     elif model_name == "SqueezeNet":
-        net = models.squeezenet1_1(pretrained=True)
+        model = models.squeezenet1_1(pretrained=True)
     elif model_name == "Vgg":
-        net = models.vgg11(pretrained=True)
+        model = models.vgg11(pretrained=True)
     elif model_name == "Googlenet":
-        net = models.googlenet(pretrained=True, progress=True)
+        model = models.googlenet(pretrained=True, progress=True)
     elif model_name == "Shufflenetv2":
-        net = models.shufflenet_v2_x1_0(pretrained=True)
+        model = models.shufflenet_v2_x1_0(pretrained=True)
     elif model_name == "Efficientnet":
-        net = models.efficientnet_b7(pretrained=True)
+        model = models.efficientnet_b7(pretrained=True)
     elif model_name == "Mnasnet1_0":
-        net = models.mnasnet1_0(pretrained=True, progress=True)
+        model = models.mnasnet1_0(pretrained=True, progress=True)
     elif model_name == "Regnet":
-        net = models.regnet_y_800mf(pretrained=True, progress=True)
+        model = models.regnet_y_800mf(pretrained=True,progress=True)
     elif model_name == "Alexnet":
-        net = models.alexnet(pretrained=True)
+        model = models.alexnet(pretrained=True)
     elif model_name == "Inceptionv3":
-        net = models.inception_v3(pretrained=True)
+        model = models.inception_v3(pretrained=True)
     else:
         model = models.resnet101(pretrained=True)
     # model = checkpoint['model']  # extra model
@@ -111,7 +113,7 @@ def predict(model,model_name):
     if dev == 1:
         model.cuda()
     pred_list, _id = [], []
-    for i in tqdm(range(len(imgs))):
+    for i in tqdm.tqdm(range(len(imgs))):
         img_path = imgs[i].strip()
         # print(img_path)
         _id.append(os.path.basename(img_path).split('.')[0])
@@ -139,10 +141,13 @@ if __name__ == "__main__":
     with open(cfg.TEST_LABEL_DIR,  'r')as f:
         imgs = f.readlines()
 
+    save_path = './infdata/{}_result.csv'.format(model_name)
+    Truth = ['Cov', 'Norm']
+    Class_name= ['Covid','Normal']
+    submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
     # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)
 
-    Class_name= ['Covid','Normal']
     pre_res = []
     for i in tqdm.tqdm(pred_list):
         if int(i) == 1:
@@ -153,5 +158,12 @@ if __name__ == "__main__":
     print(_id,pre_res)
 
     submission = pd.DataFrame({"ID": _id, "Label": pre_res})
-    submission.to_csv(cfg.BASE + '/infdata/{}_submission.csv'
-                      .format(model_name), index=False, header=False)
+    submission.to_csv(submi_path, index=False, header=False)
+
+    data = deal_csv(submi_path, Truth, Class_name)
+    auc = plot_roc(data)
+    plot_cm(data)
+    acc, recall, precision, f1 = evaluate_res(data)
+
+    result = make_csv(model_name, acc, recall, precision, f1, auc)
+    result.to_csv(save_path, header=True, mode='a')

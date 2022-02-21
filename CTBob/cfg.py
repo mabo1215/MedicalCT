@@ -14,7 +14,6 @@ INPUT_SIZE = 640
 # LR = 1e-3
 
 
-
 ## Model Name
 
 # model_name = 'DenseNet'
@@ -23,11 +22,11 @@ INPUT_SIZE = 640
 # model_name = 'Mobilenet_v3_small'
 # model_name = 'SqueezeNet'
 # model_name = 'Vgg'
-model_name = 'Googlenet'
+# model_name = 'Googlenet'
 # model_name = 'Shufflenetv2'
 # model_name = 'Efficientnet'
 # model_name = 'Mnasnet1_0'
-# model_name = 'Regnet'
+model_name = 'Regnet'
 # model_name = 'Alexnet'
 # model_name = 'Inceptionv3'
 # model_name = 'Resnet101'
@@ -38,7 +37,7 @@ model_name = 'Googlenet'
 # weights_path = 'checkpoint/CodeDes/model_0100.pth'
 # weights_path = 'checkpoint/CTSqeExp/model_0100.pth'
 # weights_path = 'checkpoint/CTVggExp/model_0100.pth'
-weights_path = 'checkpoint/XRGogExp/XRGog_0100.pth'
+weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
 
 # from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
 # MODEL_NAMES = {
@@ -65,7 +64,8 @@ SAVE_FOLDER = os.path.join(BASE, 'weights/')
 ## data path
 # TRAIN_LABEL_DIR =BASE + 'train.txt'
 # VAL_LABEL_DIR = BASE + 'val.txt'
-TEST_LABEL_DIR = os.path.join(BASE,  'infdata/test.txt')
+# TEST_LABEL_DIR = os.path.join(BASE,  'infdata/test.txt')
+TEST_LABEL_DIR = 'E:/work/2/CT/COVID19Dataset/Xray/test.txt'
 
 ## full saved path for trained_model
 TRAINED_MODEL = os.path.join(BASE, weights_path)
