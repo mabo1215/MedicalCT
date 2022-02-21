@@ -26,9 +26,9 @@ INPUT_SIZE = 640
 # model_name = 'Shufflenetv2'
 # model_name = 'Efficientnet'
 # model_name = 'Mnasnet1_0'
-model_name = 'Regnet'
+# model_name = 'Regnet'
 # model_name = 'Alexnet'
-# model_name = 'Inceptionv3'
+model_name = 'Inceptionv3'
 # model_name = 'Resnet101'
 
 
@@ -37,7 +37,10 @@ model_name = 'Regnet'
 # weights_path = 'checkpoint/CodeDes/model_0100.pth'
 # weights_path = 'checkpoint/CTSqeExp/model_0100.pth'
 # weights_path = 'checkpoint/CTVggExp/model_0100.pth'
-weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
+# weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
+# weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
+weights_path = 'checkpoint/XrayIncExp/XrayInc_0100.pth'
+
 
 # from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
 # MODEL_NAMES = {

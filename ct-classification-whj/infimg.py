@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # _id, pred_list = tta_predict(trained_model)
     idx, pred_list = predict(trained_model, model_name, test_percent=1)
     Truth = ['non', 'covid']
-    Class_name = ['Normal', 'Pneumonia']
+    Class_name = ['Normal', 'COVID']
     pre_res = []
     for i in pred_list:
         if int(i) == 1:
@@ -145,11 +145,14 @@ if __name__ == "__main__":
                       .format(model_name), index=False)
 
     data = deal_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name)
-    plot_roc(data)
+    auc = plot_roc(data)
     plot_cm(data)
-    auc = eval_auc(data)
     acc, recall, precision, f1 = evaluate(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
     result.to_csv(save_path, header=True, mode='a')
 
+    result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
+                                  model_name)
+    data.to_csv(save_path, header=True, mode='a')
+    plot_roc_curve(fpr, tpr)

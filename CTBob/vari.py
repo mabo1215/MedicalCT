@@ -34,6 +34,8 @@ if __name__ == "__main__":
     sample = [0.93 , 0.936 , 0.936 , 0.934 ,  0.937 ] # RESNET101XR
     sample = [0.953 , 0.956 , 0.953 , 0.954 , 0.953] # RESNET18XR
     sample = [0.97 , 0.97 , 0.97 , 0.968 , 0.973] # RESNET18CT
+    sample = [0.979 ,0.981 ,0.977 , 0.98  , 0.98] # RegNetXR
+
 
 
     # Prints variance of the sample set

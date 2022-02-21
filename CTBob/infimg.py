@@ -166,4 +166,4 @@ if __name__ == "__main__":
     acc, recall, precision, f1 = evaluate_res(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
-    result.to_csv(save_path, header=True, mode='a')
+    result.to_csv(save_path, header=False, mode='a')
