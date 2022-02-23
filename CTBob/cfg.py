@@ -41,7 +41,7 @@ model_name = 'Inceptionv3'
 # weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
 # weights_path = 'checkpoint/CTIncExp/CTInc_0100.pth'
 # weights_path = 'checkpoint/XrayIncExp/XrayInc_best.pth'
-weights_path = 'checkpoint/AmazonIncExp/AmazonInc_best.pth'
+weights_path = 'checkpoint/AmazonIncExp/amainc_best.pth'
 # weights_path = 'checkpoint/AmazonGogExp/AmazonGog_best.pth'
 
 

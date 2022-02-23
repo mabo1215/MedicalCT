@@ -38,7 +38,7 @@ def plot_cm(data):
     # cm[0, 1] = len(data[(data.truth == 0) & (data.predict == 1)])
     # cm[1, 0] = len(data[(data.truth == 1) & (data.predict == 0)])
     # cm[1, 1] = len(data[(data.truth == 1) & (data.predict == 1)])
-    classes = [0, 1, 2]
+    classes = [0, 1, 2,3]
     plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
     plt.title('Confusion matrix')
@@ -55,7 +55,7 @@ def plot_cm(data):
 
 
 def plot_roc(data,model_name):
-    data.columns = ['truth' , 'predict']
+    # data.columns = ['truth' , 'predict']
     y_truth = data['truth'].values
     y_predict = data['predict'].values
     fpr,tpr,thresholds = roc_curve(y_truth.tolist(),y_predict.tolist(),pos_label=2)

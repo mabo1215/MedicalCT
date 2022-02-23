@@ -145,10 +145,10 @@ if __name__ == "__main__":
     # Truth = ['Cov', 'Norm']
     # # Truth = ['COVID', 'NORMAL']
     # Class_name= ['Covid','Normal']
-    Class_name= ['featurephone', 'jewelry','vr']
-    Truth = ['phone', 'Jewelry','vr']
+    Class_name= ['featurephone', 'jewelry','vr', 'watches']
+    Truth = ['phone', 'Jewelry','vr', 'watches']
     submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
-    # # _id, pred_list = tta_predict(trained_model)
+    # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)
 
     pre_res = []
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         else:
             pre_res.append(Class_name[0])
 
-    submission = pd.DataFrame({"ID": _id, "Label": pre_res})
+    submission = pd.DataFrame({"truth": _id, "predict": pre_res})
     submission.to_csv(submi_path, index=False, header=True)
 
     data = deal_csv(submi_path, Truth, Class_name)
