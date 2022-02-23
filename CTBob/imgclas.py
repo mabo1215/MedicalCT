@@ -112,6 +112,12 @@ def load_local_dataset(dataset_dir, model_name, ratio = 0.8, batch_size = 256):
         print("Load dataset with inception format")
     else:
         all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
+    class_list = all_datasets.classes
+
+    with open(dataset_dir+'class_list.txt','w') as f:
+        for i in class_list:
+            f.writelines(i+'\n')
+    f.close()
     #将数据集划分成训练集和测试集
     train_size=int(ratio * len(all_datasets))
     test_size=len(all_datasets) - train_size
@@ -120,7 +126,7 @@ def load_local_dataset(dataset_dir, model_name, ratio = 0.8, batch_size = 256):
     train_iter = torch.utils.data.DataLoader(train_datasets, batch_size=batch_size, shuffle=True)
     test_iter = torch.utils.data.DataLoader(test_datasets, batch_size=batch_size, shuffle=True)
 
-    return train_iter,test_iter
+    return train_iter,test_iter,class_list
 
 def load_train_test_dataset(train_dir, test_dir , batch_size = 256):
     #获取数据集
@@ -203,12 +209,12 @@ if __name__ == "__main__":
     parser.add_argument('--data-dir', type=str, default="E:/work/2/imgdir/",help="") #E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0002)
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--epochs', type=int, default=10)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/AmazonGogExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/AmazonIncExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="Googlenet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
+    parser.add_argument('--model-name', type=str, default="Inceptionv3",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
 
     args = parser.parse_args()
 
@@ -223,7 +229,7 @@ if __name__ == "__main__":
     dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
 
     print(args,dev)
-    train_iter, test_iter = load_local_dataset(dataset_dir, model_name,ratio,batch_size)
+    train_iter, test_iter, class_list = load_local_dataset(dataset_dir, model_name,ratio,batch_size)
     net, loss, optimizer, scheduler = load_model(model_name,dev,lr)
 
     wandb.init(project=model_name, entity="mabo1215")

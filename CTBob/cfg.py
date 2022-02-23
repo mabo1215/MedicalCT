@@ -22,13 +22,13 @@ INPUT_SIZE = 640
 # model_name = 'Mobilenet_v3_small'
 # model_name = 'SqueezeNet'
 # model_name = 'Vgg'
-model_name = 'Googlenet'
+# model_name = 'Googlenet'
 # model_name = 'Shufflenetv2'
 # model_name = 'Efficientnet'
 # model_name = 'Mnasnet1_0'
 # model_name = 'Regnet'
 # model_name = 'Alexnet'
-# model_name = 'Inceptionv3'
+model_name = 'Inceptionv3'
 # model_name = 'Resnet101'
 
 
@@ -41,8 +41,8 @@ model_name = 'Googlenet'
 # weights_path = 'checkpoint/XrayRegExp/XrayReg_0100.pth'
 # weights_path = 'checkpoint/CTIncExp/CTInc_0100.pth'
 # weights_path = 'checkpoint/XrayIncExp/XrayInc_best.pth'
-# weights_path = 'checkpoint/AmazonIncExp/AmazonInc_best.pth'
-weights_path = 'checkpoint/AmazonGogExp/AmazonGog_best.pth'
+weights_path = 'checkpoint/AmazonIncExp/AmazonInc_best.pth'
+# weights_path = 'checkpoint/AmazonGogExp/AmazonGog_best.pth'
 
 
 # from imgmodels import Resnet50, Resnet101, Resnext101_32x8d,Resnext101_32x16d, Densenet121, Densenet169, Mobilenetv2, Efficientnet, Resnext101_32x32d, Resnext101_32x48d
