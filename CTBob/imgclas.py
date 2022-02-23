@@ -81,8 +81,8 @@ def load_model(model_name,dev,lr):
     elif model_name == "Alexnet":
         net = models.alexnet(pretrained=True)
     elif model_name == "Inceptionv3":
-        print("heelo3")
         net = models.inception_v3(pretrained=True)
+        print("Load Inceptionv3 model")
     # if model_name == "Alexnet":
     #     optimizer = torch.optim.sgd(net.parameters(), lr=lr)  # 优化器
     # else:
@@ -109,7 +109,7 @@ def load_local_dataset(dataset_dir, model_name, ratio = 0.8, batch_size = 256):
     #获取数据集
     if model_name == 'Inceptionv3':
         all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms_inc)
-        print("heelo")
+        print("Load dataset with inception format")
     else:
         all_datasets = datasets.ImageFolder(dataset_dir, transform=train_transforms)
     #将数据集划分成训练集和测试集
@@ -200,15 +200,15 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/CT/",help="") #E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/imgdir/",help="") #E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0002)
-    parser.add_argument('--batch-size', type=int, default=32)
-    parser.add_argument('--epochs', type=int, default=100)
+    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--epochs', type=int, default=10)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/CTIncExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/AmazonGogExp/",help="")   # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="Inceptionv3",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
+    parser.add_argument('--model-name', type=str, default="Googlenet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
 
     args = parser.parse_args()
 

@@ -142,26 +142,27 @@ if __name__ == "__main__":
         imgs = f.readlines()
 
     save_path = './infdata/{}_result.csv'.format(model_name)
-    Truth = ['Cov', 'Norm']
-    Class_name= ['Covid','Normal']
+    # Truth = ['Cov', 'Norm']
+    # # Truth = ['COVID', 'NORMAL']
+    # Class_name= ['Covid','Normal']
+    Class_name= ['featurephone', 'jewelry','vr']
+    Truth = ['phone', 'Jewelry','vr']
     submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
-    # _id, pred_list = tta_predict(trained_model)
+    # # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)
 
     pre_res = []
     for i in tqdm.tqdm(pred_list):
-        if int(i) == 1:
-            pre_res.append(Class_name[-1])
+        if str(i).isdigit:
+            pre_res.append(Class_name[int(i)])
         else:
             pre_res.append(Class_name[0])
 
-    print(_id,pre_res)
-
     submission = pd.DataFrame({"ID": _id, "Label": pre_res})
-    submission.to_csv(submi_path, index=False, header=False)
+    submission.to_csv(submi_path, index=False, header=True)
 
     data = deal_csv(submi_path, Truth, Class_name)
-    auc = plot_roc(data)
+    auc = plot_roc(data,model_name)
     plot_cm(data)
     acc, recall, precision, f1 = evaluate_res(data)
 
