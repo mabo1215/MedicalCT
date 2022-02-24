@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # # Truth = ['COVID', 'NORMAL']
     # Class_name= ['Covid','Normal']
     Class_name= ['featurephone', 'jewelry','vr', 'watches']
-    Truth = ['phone', 'Jewelry','vr', 'watches']
+    Truth = ['featurephone', 'jewelry','vr', 'watchs']
     submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
     # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)
@@ -167,4 +167,4 @@ if __name__ == "__main__":
     acc, recall, precision, f1 = evaluate_res(data)
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
-    result.to_csv(save_path, header=False, mode='a')
+    result.to_csv(save_path, header=True, mode='a')

@@ -55,10 +55,11 @@ def plot_cm(data):
 
 
 def plot_roc(data,model_name):
-    # data.columns = ['truth' , 'predict']
-    y_truth = data['truth'].values
-    y_predict = data['predict'].values
-    fpr,tpr,thresholds = roc_curve(y_truth.tolist(),y_predict.tolist(),pos_label=2)
+    data.columns = ['truth' , 'predict']
+    y_truth = data['truth'].values.tolist()
+    y_predict = data['predict'].values.tolist()
+    print(y_truth)
+    fpr,tpr,thresholds = roc_curve(y_truth,y_predict,pos_label=2)
     roc_auc = auc(fpr,tpr)
     # data.sort_values('predict', inplace=True, ascending=False)
     # TPRandFPR = pd.DataFrame(index=range(len(data)), columns=('TP', 'FP'))

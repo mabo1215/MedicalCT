@@ -72,7 +72,7 @@ SAVE_FOLDER = os.path.join(BASE, 'weights/')
 # VAL_LABEL_DIR = BASE + 'val.txt'
 # TEST_LABEL_DIR = os.path.join(BASE,  'infdata/test.txt')
 # TEST_LABEL_DIR = 'E:/work/2/CT/COVID19Dataset/Xray/test.txt'
-TEST_LABEL_DIR = 'E:/work/2/imgdir/amazon.txt'
+TEST_LABEL_DIR = "E:/work/2/unknown/taobao.txt"
 
 ## full saved path for trained_model
 TRAINED_MODEL = os.path.join(BASE, weights_path)
