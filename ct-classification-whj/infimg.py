@@ -118,6 +118,7 @@ def predict(model, model_name, test_percent):
 if __name__ == "__main__":
     trained_model = cfg.TRAINED_MODEL
     model_name = cfg.model_name
+    data_path = '' # 测试数据的根目录位置
 
     if not os.path.exists(cfg.BASE + '/infdata/'):
         os.makedirs(cfg.BASE + '/infdata/')
@@ -130,7 +131,7 @@ if __name__ == "__main__":
 
     # _id, pred_list = tta_predict(trained_model)
     idx, pred_list = predict(trained_model, model_name, test_percent=1)
-    Truth = ['non', 'covid']
+    Truth = get_labels(data_path)
     Class_name = ['Normal', 'COVID']
     pre_res = []
     for i in pred_list:

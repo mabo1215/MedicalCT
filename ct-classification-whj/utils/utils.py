@@ -1,3 +1,5 @@
+import os
+import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -100,3 +102,20 @@ def make_csv(model_name, acc, recall, precision, f1, AUC):
     })
 
     return result
+
+
+# 从文件名中获取真实标签
+def get_labels(data_path):
+    # data_path = 'D:/Download/data/picture'
+    total = os.listdir(data_path)
+    labels = []
+    for sub_path in total:
+        file_path = os.path.join(data_path,sub_path)
+        if os.path.isdir(file_path):
+            name = os.listdir(file_path)[0]
+            name = name.split('.')[0] # 保留文件名后缀之前的文件名
+            cop = re.compile("[^\u0041-\u005a\u0061-\u007a]") # 正则表达式只保留英文字母 
+            name = cop.sub('',name)
+            labels.append(name)
+    # print(labels)
+    return labels
