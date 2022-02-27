@@ -176,5 +176,4 @@ if __name__ == "__main__":
         "batch_size": batch_size
     }
 
-
     train(net, train_iter, test_iter, optimizer, loss, num_epochs, dev, args.save_dir)

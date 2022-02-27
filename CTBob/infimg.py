@@ -138,6 +138,8 @@ def predict(model,model_name):
 if __name__ == "__main__":
     trained_model = cfg.TRAINED_MODEL
     model_name = cfg.model_name
+    test_data_path = 'E:/work/2/imgdir/' # 测试数据的根目录位置
+    train_dataset_path = 'E:/work/2/imgdir/' # 训练数据集的根目录位置
     with open(cfg.TEST_LABEL_DIR,  'r')as f:
         imgs = f.readlines()
 
@@ -145,8 +147,12 @@ if __name__ == "__main__":
     # Truth = ['Cov', 'Norm']
     # # Truth = ['COVID', 'NORMAL']
     # Class_name= ['Covid','Normal']
-    Class_name= ['featurephone', 'jewelry','vr', 'watches']
-    Truth = ['featurephone', 'jewelry','vr', 'watchs']
+    # Class_name= ['featurephone', 'jewelry','vr', 'watches']
+    # Truth = ['featurephone', 'jewelry','vr', 'watchs']
+    Truth = get_labels(test_data_path)
+    Class_name = get_pre(train_dataset_path)
+    print(Truth)
+    print(Class_name)
     submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
     # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)

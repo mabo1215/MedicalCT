@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import auc, roc_curve , confusion_matrix
 import warnings
 import itertools
+import os
+import re
 
 warnings.filterwarnings("ignore")
 
@@ -120,3 +122,32 @@ def make_csv(model_name, acc, recall, precision, f1, AUC):
     })
 
     return result
+
+# 从文件名中获取真实标签
+def get_labels(data_path):
+    # data_path = 'D:/Download/data/picture'
+    total = os.listdir(data_path)
+    labels = []
+    for sub_path in total:
+        file_path = os.path.join(data_path,sub_path)
+        if os.path.isdir(file_path):
+            name = os.listdir(file_path)[0]
+            name = name.split('.')[0] # 保留文件名后缀之前的文件名
+            cop = re.compile("[^\u0041-\u005a\u0061-\u007a]") # 正则表达式只保留英文字母
+            name = cop.sub('',name)
+            labels.append(name)
+    # print(labels)
+    return labels
+
+ # 从训练生成的txt中获取训练标签
+def get_pre(path):
+    # path = "D:/Download/data/COVID-19 Dataset/ct/class_list.txt"
+    path = path + 'class_list.txt'
+    file=open(path,'r')
+    txt=file.readlines()
+    predit=[]
+    for w in txt:
+        w=w.replace('\n','')
+        predit.append(w)
+    # print(predit)
+    return predit
