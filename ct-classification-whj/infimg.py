@@ -133,7 +133,7 @@ if __name__ == "__main__":
     # _id, pred_list = tta_predict(trained_model)
     idx, pred_list = predict(trained_model, model_name, test_percent=1)
     Truth = get_labels(data_path)
-    Class_name = get_pre()
+    Class_name = get_pre(train_path)
     pre_res = []
     for i in pred_list:
         if int(i) == 1:
