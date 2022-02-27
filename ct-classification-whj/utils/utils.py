@@ -124,6 +124,7 @@ def get_labels(data_path):
  # 从训练生成的txt中获取训练标签 
 def get_pre(path):
     # path = "D:/Download/data/COVID-19 Dataset/ct/class_list.txt"
+    path = path + 'class_list.txt'
     file=open(path,'r')
     txt=file.readlines()
     predit=[]
