@@ -119,6 +119,7 @@ if __name__ == "__main__":
     trained_model = cfg.TRAINED_MODEL
     model_name = cfg.model_name
     data_path = '' # 测试数据的根目录位置
+    train_path = '' # 训练数据集的根目录位置
 
     if not os.path.exists(cfg.BASE + '/infdata/'):
         os.makedirs(cfg.BASE + '/infdata/')
@@ -132,7 +133,7 @@ if __name__ == "__main__":
     # _id, pred_list = tta_predict(trained_model)
     idx, pred_list = predict(trained_model, model_name, test_percent=1)
     Truth = get_labels(data_path)
-    Class_name = ['Normal', 'COVID']
+    Class_name = get_pre()
     pre_res = []
     for i in pred_list:
         if int(i) == 1:
@@ -152,8 +153,3 @@ if __name__ == "__main__":
 
     result = make_csv(model_name, acc, recall, precision, f1, auc)
     result.to_csv(save_path, header=True, mode='a')
-
-    result, tpr, fpr = result_csv(cfg.BASE + '/infdata/{}_submission.csv'.format(model_name), Truth, Class_name,
-                                  model_name)
-    data.to_csv(save_path, header=True, mode='a')
-    plot_roc_curve(fpr, tpr)
