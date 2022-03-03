@@ -1,19 +1,48 @@
 import os
 import re
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.metrics import auc
 import warnings
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch
+from sklearn.metrics import auc
+from torchvision import models, transforms
+
 warnings.filterwarnings("ignore")
+
+
+# Load the trained model
+def load_checkpoint(filepath, model_name):
+
+    """
+    If the model is the following:
+    'mobilenet_v3_small','googlenet',
+    'mnasnet1_0','regnet_y_800mf'
+    Add parameters: progress=True
+    Such as: 
+    model_name = 'mobilenet_v3_small'
+    model = models.__dict__[model_name](pretrained=True, progress=True)
+    """
+
+    print(filepath)
+    checkpoint = torch.load(filepath)
+    # model = models.__dict__[model_name](pretrained=True, progress=True)
+    model = models.__dict__[model_name](pretrained=True)
+    model.load_state_dict(checkpoint)  # load model
+    for parameter in model.parameters():
+        parameter.requires_grad = False
+    model.eval()
+
+    return model
 
 
 def deal_csv(csv_url, ids, labels):
     data = pd.read_csv(csv_url)
     data.columns = ['truth', 'predict']
     data['truth'] = data['truth'].apply(lambda x: 1 if ids[0] in x else 0)
-    data['predict'] = data['predict'].apply(lambda x: 1 if labels[0] in x else 0)
+    data['predict'] = data['predict'].apply(
+        lambda x: 1 if labels[0] in x else 0)
     data.sort_values('predict', inplace=True, ascending=False)
 
     return data
@@ -35,7 +64,8 @@ def plot_cm(data):
     plt.yticks(tick_marks, classes)
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, cm[i, j], horizontalalignment="center", color="red" if cm[i, j] > thresh else "black")
+        plt.text(j, i, cm[i, j], horizontalalignment="center",
+                 color="red" if cm[i, j] > thresh else "black")
         plt.tight_layout()
         plt.ylabel('True label')
         plt.xlabel('Predicted label')
@@ -43,12 +73,14 @@ def plot_cm(data):
 
 
 def plot_roc(data):
-    data.sort_values('predict', inplace=True, ascending=False)
+    # data.sort_values('predict', inplace=True, ascending=False)
     TPRandFPR = pd.DataFrame(index=range(len(data)), columns=('TP', 'FP'))
     for j in range(len(data)):
         data1 = data.head(n=j + 1)
-        FP = len(data1[data1['truth'] == 0]) / float(len(data[data['truth'] == 0]))
-        TP = len(data1[data1['truth'] == 1]) / float(len(data[data['truth'] == 1]))
+        FP = len(data1[data1['truth'] == 0]) / \
+            float(len(data[data['truth'] == 0]))
+        TP = len(data1[data1['truth'] == 1]) / \
+            float(len(data[data['truth'] == 1]))
         TPRandFPR.iloc[j] = [TP, FP]
     AUC = auc(TPRandFPR['FP'], TPRandFPR['TP'])
     # plt.scatter(x=TPRandFPR['FP'],y=TPRandFPR['TP'],label='(FPR,TPR)',color='b')
@@ -63,18 +95,6 @@ def plot_roc(data):
     plt.show()
     # plt.savefig('roc_curve:{}'.format(model_name))
 
-
-def eval_auc(data):
-    TPRandFPR = pd.DataFrame(index=range(len(data)), columns=('TP', 'FP'))
-    for j in range(len(data)):
-        data1 = data.head(n=j + 1)
-        FP = len(data1[data1['truth'] == 0]) / float(len(data[data['truth'] == 0]))
-        TP = len(data1[data1['truth'] == 1]) / float(len(data[data['truth'] == 1]))
-        TPRandFPR.iloc[j] = [TP, FP]
-    AUC= auc(TPRandFPR['FP'],TPRandFPR['TP'])
-
-    # return TPRandFPR
-    # return TPRandFPR,AUC
     return AUC
 
 
@@ -110,26 +130,27 @@ def get_labels(data_path):
     total = os.listdir(data_path)
     labels = []
     for sub_path in total:
-        file_path = os.path.join(data_path,sub_path)
+        file_path = os.path.join(data_path, sub_path)
         if os.path.isdir(file_path):
             name = os.listdir(file_path)[0]
-            name = name.split('.')[0] # 保留文件名后缀之前的文件名
-            cop = re.compile("[^\u0041-\u005a\u0061-\u007a]") # 正则表达式只保留英文字母 
-            name = cop.sub('',name)
+            name = name.split('.')[0]  # 保留文件名后缀之前的文件名
+            cop = re.compile("[^\u0041-\u005a\u0061-\u007a]")  # 正则表达式只保留英文字母
+            name = cop.sub('', name)
             labels.append(name)
     # print(labels)
+
     return labels
 
-
- # 从训练生成的txt中获取训练标签 
+ # 从训练生成的txt中获取训练标签
 def get_pre(path):
     # path = "D:/Download/data/COVID-19 Dataset/ct/class_list.txt"
-    path = path + 'class_list.txt'
-    file=open(path,'r')
-    txt=file.readlines()
-    predit=[]
+    path = path + '/' + 'class_list.txt'
+    file = open(path, 'r')
+    txt = file.readlines()
+    predit = []
     for w in txt:
-        w=w.replace('\n','')
+        w = w.replace('\n', '')
         predit.append(w)
     # print(predit)
+
     return predit
