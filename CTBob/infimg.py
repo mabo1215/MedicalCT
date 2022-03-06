@@ -151,8 +151,8 @@ if __name__ == "__main__":
     # Truth = ['featurephone', 'jewelry','vr', 'watchs']
     Truth = get_labels(test_data_path)
     Class_name = get_pre(train_dataset_path)
-    print(Truth)
-    print(Class_name)
+    # print(Truth)
+    # print(Class_name)
     submi_path = cfg.BASE + '/infdata/{}_submission.csv'.format(model_name)
     # _id, pred_list = tta_predict(trained_model)
     _id, pred_list = predict(trained_model,model_name)

@@ -86,8 +86,10 @@ def load_model(model_name,dev,lr):
     # if model_name == "Alexnet":
     #     optimizer = torch.optim.sgd(net.parameters(), lr=lr)  # 优化器
     # else:
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
+    # optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
     # optimizer = torch.optim.AdamW(net.parameters(), lr=lr)  # 优化器
+    # optimizer = torch.optim.RMSprop(net.parameters(), lr=lr)  # 优化器
+    optimizer = torch.optim.ASGD(net.parameters(), lr=lr)  # 优化器
     # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)  # lr scheduler
     # scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, max_lr= 0.3 , last_epoch=-1)  # lr scheduler
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.9)  # lr scheduler
@@ -206,7 +208,7 @@ def train(net, train_iter, test_iter, optimizer,  loss, num_epochs,dev,save_dir,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-dir', type=str, default="E:/work/2/imgdir/",help="") #E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt
+    parser.add_argument('--data-dir', type=str, default="E:/work/2/CT/COVID19Dataset/Xray/",help="") #E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt  E:/work/2/imgdir/
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0002)
     parser.add_argument('--batch-size', type=int, default=32)

@@ -47,7 +47,9 @@ def load_model(model_name, dev, lr):
         net = models.resnet152(pretrained=True)
     elif model_name == "MobileNetV3":
         net = models.MobileNetV3()
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
+    # optimizer = torch.optim.Adam(net.parameters(), lr=lr)  # 优化器
+    # optimizer = torch.optim.RMSprop(net.parameters(), lr=lr)  # 优化器
+    optimizer = torch.optim.ASGD(net.parameters(), lr=lr)  # 优化器
 
     if dev == 1 and model_name != "ctmodel":
         net.to('cuda')
