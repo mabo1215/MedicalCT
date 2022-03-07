@@ -170,7 +170,7 @@ if __name__ == "__main__":
     train_iter, test_iter = load_local_dataset(dataset_dir, ratio, batch_size)
     net, loss, optimizer = load_model(args.model_name, dev, lr)
 
-    wandb.init(project=model_name, entity="mabo1215")
+    wandb.init(project='ct', entity="dearpuff", name=model_name)
 
     wandb.config = {
         "learning_rate": lr,
