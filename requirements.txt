@@ -28,3 +28,4 @@ sentencepiece != 0.1.92
 scipy
 scikit-learn
 protobuf
+pytest
