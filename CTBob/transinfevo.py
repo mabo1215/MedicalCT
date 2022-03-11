@@ -32,11 +32,11 @@ import matplotlib
 # ])
 
 # 对测试集做变换
-test_transforms = tfc.Compose([
-    tfc.RandomResizedCrop(224),
-    tfc.ToTensor(),
-    tfc.Normalize((.5, .5, .5), (.5, .5, .5))
-])
+# test_transforms = tfc.Compose([
+#     tfc.RandomResizedCrop(224),
+#     tfc.ToTensor(),
+#     tfc.Normalize((.5, .5, .5), (.5, .5, .5))
+# ])
 
 # def get_train_transform():
 #     return tfc.Compose([
