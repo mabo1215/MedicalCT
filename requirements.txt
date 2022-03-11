@@ -2,6 +2,7 @@ torch>=1.10.2+cu113
 torchvision>=0.11.3+cu113
 #transformers==3.0.2
 transformers
+torch-model-archiver==0.4.2
 seqeval==0.0.12
 pytorch-crf==0.7.2
 #pandas>=1.3.5
@@ -10,7 +11,6 @@ Pillow>=9.0.1
 fsspec==2021.8.1
 gcsfs==2021.8.1
 google-cloud-storage==1.42.1
-torch-model-archiver==0.4.2
 pytorch_lightning
 
 google-cloud-aiplatform==1.4.0
@@ -24,12 +24,16 @@ pandas>=1.3.2
 tqdm>=4.62.3
 wandb>=0.12.10
 matplotlib>=3.5.1
+pytest
 
 #localtransformers
+hugsvision>=0.75.3
+huggingface-hub>=0.4.0
+statistics>=1.0.3.5
 accelerate
 datasets >= 1.8.0
 sentencepiece != 0.1.92
 scipy
 scikit-learn
 protobuf
-pytest
+keras>=2.8.0
