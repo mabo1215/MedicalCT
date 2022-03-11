@@ -21,7 +21,7 @@ from hugsvision.inference.VisionClassifierInference import VisionClassifierInfer
 from hugsvision.nnet.VisionClassifierTrainer import VisionClassifierTrainer
 from hugsvision.dataio.VisionDataset import VisionDataset
 import matplotlib
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
 
 # 对训练集做一个变换
 # train_transforms = tfc.Compose([
