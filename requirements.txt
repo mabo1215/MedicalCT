@@ -22,6 +22,8 @@ kfp-pipeline-spec==0.1.8
 kfp-server-api==1.6.0
 pandas>=1.3.2
 tqdm>=4.62.3
+wandb>=0.12.10
+matplotlib>=3.5.1
 
 #localtransformers
 accelerate
