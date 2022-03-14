@@ -53,7 +53,7 @@ test_transforms_inc = transforms.Compose([
 ])
 
 
-def load_model(model_name, dev, lr):
+def load_model(model_name, device, dev, lr):
     # os.system('mkdir -p /home/whj/.cache/torch/hub/checkpoints/ &&'
     #       'cp ./pretrained/resnet152-b121ed2d.pth '
     #       '/home/work/.cache/torch/hub/checkpoints/resnet152-b121ed2d.pth')
@@ -66,7 +66,10 @@ def load_model(model_name, dev, lr):
     optimizer = torch.optim.ASGD(net.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.9)
     if dev == 1 and model_name != 'ctmodel':
-        net.to('cuda')
+        if len(device) >= 2:
+            net = torch.nn.DataParallel(net,device_ids=device).to('cuda')
+        else:
+            net.to('cuda')
         loss = torch.nn.CrossEntropyLoss().to('cuda')
     elif dev == 0 and model_name != 'ctmodel':
         loss = torch.nn.CrossEntropyLoss()
@@ -187,7 +190,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt  E:/work/2/imgdir/
     parser.add_argument('--data-dir', type=str,
-                        default="D:\Download\data\COVID-19 Dataset\CT", help="")
+                        default="/home/whj/MedicalCT-main/ct-classification-whj/data/COVID-19 Dataset/CT", help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0008)
     parser.add_argument('--batch-size', type=int, default=16)
@@ -195,18 +198,22 @@ if __name__ == "__main__":
     # Data, model, and output directories
     # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
     parser.add_argument('--save-dir', type=str,
-                        default="D:\code\python\project1\MedicalCT-main\ct-classification-whj/checkpoint/CTExp", help="")
+                        default="/home/whj/MedicalCT-main/ct-classification-whj/checkpoint/CTExp/", help="")
     # parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--device', default='0', help='cuda device 0,1,2,3 or cpu')
+    parser.add_argument('--device', default='1', help='cuda device 0,1,2,3 or cpu')
     # DenseNet, resnet101, resnet152, vgg11, squeezenet1_1 , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenet_v2_x1_0 , inception_v3 ,regnet_y_800mf , alexnet ,efficientnet_b7 , mnasnet1_0
-    parser.add_argument('--model_name', type=str, default="resnet101", help="")
+    parser.add_argument('--model_name', type=str, default="efficientnet_b7", help="")
 
     args = parser.parse_args()
 
     # 定义GPU
     if torch.cuda.is_available() and args.device != 'cpu':
         dev = 1
-        os.environ['CUDA_VISIBLE_DEVICES'] = args.device # 多块GPU时定义具体某一块GPU
+        device = args.device.split(',')
+        for i in range(len(device)):
+            device[i] = int(device[i]) # 多卡并行计算，必须从0号卡开始
+        print(device)    
+        os.environ['CUDA_VISIBLE_DEVICES'] = args.device # 指定GPU进行计算,在所有卡都空闲时默认为物理0号卡
     else:
         dev = 0
 
@@ -217,6 +224,7 @@ if __name__ == "__main__":
     lr, num_epochs = args.lr, args.epochs
     model_name = args.model_name
     save_dir = os.path.join(args.save_dir, args.model_name)
+    print(save_dir)
     # save_dir = args.save_dir + args.model_name
 
     # dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
@@ -224,7 +232,7 @@ if __name__ == "__main__":
     print(args, dev)
     train_iter, test_iter, class_list = load_local_dataset(
         dataset_dir, model_name, ratio, batch_size)
-    net, loss, optimizer, scheduler = load_model(model_name, dev, lr)
+    net, loss, optimizer, scheduler = load_model(model_name, device, dev, lr)
 
     wandb.init(project="ct", entity="dearpuff", name = model_name)
 
