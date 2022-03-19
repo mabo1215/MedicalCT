@@ -60,7 +60,11 @@ def load_model(model_name, device, dev, lr):
     net = []
     loss = 0
     optimizer = []
-    net = models.__dict__[model_name]
+    print(models.__dict__[model_name])
+    if model_name == "DenseNet":
+        net = models.densenet201()
+    else:
+        net = models.__dict__[model_name]
     # net = models.__dict__[model_name](pretrained=True)
     # net = models.__dict__[model_name](pretrained=True, progress=True)
     # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
@@ -191,7 +195,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # E:/work/2/CT/COVID19Dataset/Xray/   E:/work/2/CT/COVID19Dataset/CT/ E:/work/2/imgdir/amazon.txt  E:/work/2/imgdir/
     parser.add_argument('--data-dir', type=str,
-                        default="/home/whj/MedicalCT-main/ct-classification-whj/data/COVID-19 Dataset/CT", help="")
+                        default="E:/work/2/CT/COVID19Dataset/Xray/", help="")  #E:/work/2/CT/COVID19Dataset/Xray/   #/home/whj/MedicalCT-main/ct-classification-whj/data/COVID-19 Dataset/CT
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0008)
     parser.add_argument('--batch-size', type=int, default=64)
@@ -199,11 +203,11 @@ if __name__ == "__main__":
     # Data, model, and output directories
     # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
     parser.add_argument('--save-dir', type=str,
-                        default="/home/whj/MedicalCT-main/ct-classification-whj/checkpoint/CTExp/", help="")
+                        default="E:/source/MedicalCT/CTBob/checkpoint/XrDenExp/", help="") #/home/whj/MedicalCT-main/ct-classification-whj/checkpoint/CTExp/
     # parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
     parser.add_argument('--device', default='0', help='cuda device 0,1,2,3 or cpu')
     # DenseNet, resnet101, resnet152, vgg11, squeezenet1_1 , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenet_v2_x1_0 , inception_v3 ,regnet_y_800mf , alexnet ,efficientnet_b7 , mnasnet1_0
-    parser.add_argument('--model_name', type=str, default="DenseNet", help="")
+    parser.add_argument('--model_name', type=str, default="DenseNet", help="") 
 
     args = parser.parse_args()
 
@@ -235,7 +239,7 @@ if __name__ == "__main__":
         dataset_dir, model_name, ratio, batch_size)
     net, loss, optimizer, scheduler = load_model(model_name, device, dev, lr)
 
-    wandb.init(project="Xray", entity="dearpuff", name = model_name)
+    wandb.init(project=model_name, entity="mabo1215")
 
     wandb.config = {
         "learning_rate": lr,

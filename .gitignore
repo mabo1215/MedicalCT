@@ -15,6 +15,7 @@ Medvenv/
 
 CTBob/wandb
 CTBob/lightning_logs/
+ct-classification-whj/wandb
 
 # C extensions
 *.so
