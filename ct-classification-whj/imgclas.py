@@ -63,8 +63,9 @@ def load_model(model_name, device, dev, lr):
     # print(models.__dict__[model_name])
     if model_name == "DenseNet":
         net = models.DenseNet()
+        # net = models.densenet121()
     else:
-        net = models.__dict__[model_name]
+        net = models.__dict__[model_name](pretrained=True, progress=True)
     # net = models.__dict__[model_name](pretrained=True)
     # net = models.__dict__[model_name](pretrained=True, progress=True)
     # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
@@ -207,7 +208,7 @@ if __name__ == "__main__":
     # parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
     parser.add_argument('--device', default='0', help='cuda device 0,1,2,3 or cpu')
     # DenseNet, resnet101, resnet152, vgg11, squeezenet1_1 , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenet_v2_x1_0 , inception_v3 ,regnet_y_800mf , alexnet ,efficientnet_b7 , mnasnet1_0
-    parser.add_argument('--model_name', type=str, default="DenseNet", help="") 
+    parser.add_argument('--model_name', type=str, default="densenet121", help="")
 
     args = parser.parse_args()
 

@@ -48,41 +48,43 @@ test_transforms_inc = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-def load_model(model_name,dev,lr):
+def load_model(model_name,dev,lr,pretrain,progress):
     net = []
     loss = 0
     optimizer = []
     if model_name == 'Resnet101':
-        net = models.resnet101(pretrained=True)
+        net = models.resnet101(pretrained=pretrain,)
         # net = ResNet.ResNet_model(50).cuda()  #使用GPU训练
         # net = torch.nn.DataParallel(ResNet.net).cuda()  #使用多块GPU共同训练
     elif model_name == "DenseNet":
         net = models.DenseNet()
     elif model_name == "Resnet152":
-        net = models.resnet152(pretrained=True)
+        net = models.resnet152(pretrained=pretrain)
     elif model_name == "Resnet18":
-        net = models.resnet18(pretrained=True)
+        net = models.resnet18(pretrained=pretrain)
     elif model_name == "Mobilenet_v3_small":
-        net = models.mobilenet_v3_small(pretrained=True,progress =  True)
+        net = models.mobilenet_v3_small(pretrained=pretrain,progress=progress)
     elif model_name == "SqueezeNet":
-        net = models.squeezenet1_1(pretrained=True)
+        net = models.squeezenet1_1(pretrained=pretrain)
     elif model_name == "Vgg":
-        net = models.vgg11(pretrained=True)
+        net = models.vgg11(pretrained=pretrain)
     elif model_name == "Googlenet":
-        net = models.googlenet(pretrained=True,progress =  True)
+        net = models.googlenet(pretrained=pretrain,progress=progress)
     elif model_name == "Shufflenetv2":
-        net = models.shufflenet_v2_x1_0(pretrained=True)
+        net = models.shufflenet_v2_x1_0(pretrained=pretrain)
     elif model_name == "Efficientnet":
-        net = models.efficientnet_b7(pretrained=True)
+        net = models.efficientnet_b7(pretrained=pretrain)
     elif model_name == "Mnasnet1_0":
-        net = models.mnasnet1_0(pretrained=True,progress=True)
+        net = models.mnasnet1_0(pretrained=pretrain,progress=progress)
     elif model_name == "Regnet":
-        net = models.regnet_y_800mf(pretrained=True,progress=True)
+        net = models.regnet_y_800mf(pretrained=pretrain,progress=progress)
     elif model_name == "Alexnet":
-        net = models.alexnet(pretrained=True)
+        net = models.alexnet(pretrained=pretrain)
     elif model_name == "Inceptionv3":
-        net = models.inception_v3(pretrained=True)
+        net = models.inception_v3(pretrained=pretrain)
         print("Load Inceptionv3 model")
+    else:
+        net = models.__dict__[model_name](pretrained=pretrain, progress=progress)
     # if model_name == "Alexnet":
     #     optimizer = torch.optim.sgd(net.parameters(), lr=lr)  # 优化器
     # else:
@@ -214,9 +216,12 @@ if __name__ == "__main__":
     parser.add_argument('--batch-size', type=int, default=8)
     parser.add_argument('--epochs', type=int, default=10)
     # Data, model, and output directories
-    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrDenExp/",help="")   #AmazonDenExp, XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
+    parser.add_argument('--save-dir', type=str, default="E:/source/MedicalCT/CTBob/checkpoint/XrMnaExp/",help="")   #AmazonDenExp, XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
     parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--model-name', type=str, default="DenseNet",help="")  # DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
+    parser.add_argument("--pretrain", action="store_true", help="Pretrain network")
+    parser.add_argument("--progress", action="store_true", help="progress network")
+    parser.add_argument('--model-name', type=str, default="regnet_x_32gf",
+                        help="")  # mnasnet0_75, DenseNet, Resnet101 , Resnet152 ,Vgg, SqueezeNet , CTvggExp ,Transformer ,Googlenet, Resnet18 , Mobilenet_v3_small ,Shufflenetv2 , Vgg , Inceptionv3 ,Regnet , Alexnet ,Efficientnet , Mnasnet1_0
 
     args = parser.parse_args()
 
@@ -227,12 +232,14 @@ if __name__ == "__main__":
     lr, num_epochs = args.lr, args.epochs
     model_name = args.model_name
     save_dir = args.save_dir
+    pretrain = args.pretrain
+    progress = args.progress
 
     dev = 1 if torch.cuda.is_available() and not args.no_cuda else 0
 
     print(args,dev)
     train_iter, test_iter, class_list = load_local_dataset(dataset_dir, model_name,ratio,batch_size)
-    net, loss, optimizer, scheduler = load_model(model_name,dev,lr)
+    net, loss, optimizer, scheduler = load_model(model_name,dev,lr,pretrain,progress)
 
     wandb.init(project=model_name, entity="mabo1215")
 
