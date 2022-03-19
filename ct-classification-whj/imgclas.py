@@ -60,7 +60,8 @@ def load_model(model_name, device, dev, lr):
     net = []
     loss = 0
     optimizer = []
-    net = models.__dict__[model_name](pretrained=True)
+    net = models.__dict__[model_name]
+    # net = models.__dict__[model_name](pretrained=True)
     # net = models.__dict__[model_name](pretrained=True, progress=True)
     # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     optimizer = torch.optim.ASGD(net.parameters(), lr=lr)
@@ -193,16 +194,16 @@ if __name__ == "__main__":
                         default="/home/whj/MedicalCT-main/ct-classification-whj/data/COVID-19 Dataset/CT", help="")
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0008)
-    parser.add_argument('--batch-size', type=int, default=16)
+    parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
     # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
     parser.add_argument('--save-dir', type=str,
                         default="/home/whj/MedicalCT-main/ct-classification-whj/checkpoint/CTExp/", help="")
     # parser.add_argument("--no-cuda", action="store_true", help="Avoid using CUDA when available")
-    parser.add_argument('--device', default='1', help='cuda device 0,1,2,3 or cpu')
+    parser.add_argument('--device', default='0', help='cuda device 0,1,2,3 or cpu')
     # DenseNet, resnet101, resnet152, vgg11, squeezenet1_1 , CTvggExp ,Transformer ,googlenet, resnet18 , mobilenet_v3_small ,shufflenet_v2_x1_0 , inception_v3 ,regnet_y_800mf , alexnet ,efficientnet_b7 , mnasnet1_0
-    parser.add_argument('--model_name', type=str, default="efficientnet_b7", help="")
+    parser.add_argument('--model_name', type=str, default="DenseNet", help="")
 
     args = parser.parse_args()
 
@@ -234,7 +235,7 @@ if __name__ == "__main__":
         dataset_dir, model_name, ratio, batch_size)
     net, loss, optimizer, scheduler = load_model(model_name, device, dev, lr)
 
-    wandb.init(project="ct", entity="dearpuff", name = model_name)
+    wandb.init(project="Xray", entity="dearpuff", name = model_name)
 
     wandb.config = {
         "learning_rate": lr,
