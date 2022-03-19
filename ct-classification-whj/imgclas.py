@@ -60,9 +60,9 @@ def load_model(model_name, device, dev, lr):
     net = []
     loss = 0
     optimizer = []
-    print(models.__dict__[model_name])
+    # print(models.__dict__[model_name])
     if model_name == "DenseNet":
-        net = models.densenet201()
+        net = models.DenseNet()
     else:
         net = models.__dict__[model_name]
     # net = models.__dict__[model_name](pretrained=True)
@@ -198,7 +198,7 @@ if __name__ == "__main__":
                         default="E:/work/2/CT/COVID19Dataset/Xray/", help="")  #E:/work/2/CT/COVID19Dataset/Xray/   #/home/whj/MedicalCT-main/ct-classification-whj/data/COVID-19 Dataset/CT
     parser.add_argument('--ratio', type=float, default=0.8)
     parser.add_argument('--lr', type=float, default=0.0008)
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--epochs', type=int, default=100)
     # Data, model, and output directories
     # XrSquExp, CTSqeExp , CTVggExp, CodeDesExp ,CTRen152Exp , XraySqeExp , CTGOOGLExp, XrGOOGLExp, XrayIncExp AmazonGogExp AmazonIncExp
